@@ -1,0 +1,318 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Base\CharaBase.h" />
+    <ClInclude Include="Base\EnemyBase.h" />
+    <ClInclude Include="Base\ObjectBase.h" />
+    <ClInclude Include="Base\State.h" />
+    <ClInclude Include="Base\Task.h" />
+    <ClInclude Include="Base\TaskManager.h" />
+    <ClInclude Include="Base\TowerBase.h" />
+    <ClInclude Include="Effekseer\EffekseerEffect.h" />
+    <ClInclude Include="Effekseer\EffekseerManager.h" />
+    <ClInclude Include="Game\AttackZone.h" />
+    <ClInclude Include="Game\BeastMan_Wolf.h" />
+    <ClInclude Include="Game\BuffDebuff.h" />
+    <ClInclude Include="Game\Camera.h" />
+    <ClInclude Include="Game\Castle.h" />
+    <ClInclude Include="Game\Effect.h" />
+    <ClInclude Include="Game\ElementTower.h" />
+    <ClInclude Include="Game\ElementTowerAttack.h" />
+    <ClInclude Include="Game\EnemyAttack.h" />
+    <ClInclude Include="Game\EnemyManager.h" />
+    <ClInclude Include="Game\Fade.h" />
+    <ClInclude Include="Game\Field.h" />
+    <ClInclude Include="Game\Game.h" />
+    <ClInclude Include="Game\Goblin.h" />
+    <ClInclude Include="Game\HPBar.h" />
+    <ClInclude Include="Game\BuildMenu_UI.h" />
+    <ClInclude Include="Game\Menu.h" />
+    <ClInclude Include="Game\Mutant.h" />
+    <ClInclude Include="Game\Obstacle.h" />
+    <ClInclude Include="Game\Pause_UI.h" />
+    <ClInclude Include="Game\PhysicsTower.h" />
+    <ClInclude Include="Game\Player.h" />
+    <ClInclude Include="Game\PlayerAttack.h" />
+    <ClInclude Include="Game\PlayerPushAttack.h" />
+    <ClInclude Include="Game\Player_ACT.h" />
+    <ClInclude Include="Game\Player_shield.h" />
+    <ClInclude Include="Game\Player_sword.h" />
+    <ClInclude Include="Game\Player_TD.h" />
+    <ClInclude Include="Game\Resource.h" />
+    <ClInclude Include="Game\RouteNode.h" />
+    <ClInclude Include="Game\RouteNodeManager.h" />
+    <ClInclude Include="Game\SkyBox.h" />
+    <ClInclude Include="Game\CharaStatus.h" />
+    <ClInclude Include="Game\Title.h" />
+    <ClInclude Include="Game\TowerAttack.h" />
+    <ClInclude Include="Game\Tower_Arrow.h" />
+    <ClInclude Include="Game\Tower_Cannon.h" />
+    <ClInclude Include="Game\UI.h" />
+    <ClInclude Include="Game\UIFrame.h" />
+    <ClInclude Include="Game\Vampire.h" />
+    <ClInclude Include="Global.h" />
+    <ClInclude Include="imgui\imconfig.h" />
+    <ClInclude Include="imgui\imgui.h" />
+    <ClInclude Include="imgui\imgui_impl_glfw.h" />
+    <ClInclude Include="imgui\imgui_impl_opengl2.h" />
+    <ClInclude Include="imgui\imgui_internal.h" />
+    <ClInclude Include="imgui\imgui_ja_gryph_ranges.h" />
+    <ClInclude Include="imgui\imstb_rectpack.h" />
+    <ClInclude Include="imgui\imstb_textedit.h" />
+    <ClInclude Include="imgui\imstb_truetype.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Base\BeastMan_WolfState_Walk.cpp" />
+    <ClCompile Include="Base\CharaBase.cpp" />
+    <ClCompile Include="Base\ElementState_Broken.cpp" />
+    <ClCompile Include="Base\EnemyBase.cpp" />
+    <ClCompile Include="Base\EnemyState_Attack.cpp" />
+    <ClCompile Include="Base\EnemyState_Die.cpp" />
+    <ClCompile Include="Base\EnemyState_Hit.cpp" />
+    <ClCompile Include="Base\EnemyState_Idle.cpp" />
+    <ClCompile Include="Base\EnemyState_Walk.cpp" />
+    <ClCompile Include="Base\MutantState_Special.cpp" />
+    <ClCompile Include="Base\ObjectBase.cpp" />
+    <ClCompile Include="Base\PhysicsState_Broken.cpp" />
+    <ClCompile Include="Base\PhysicsState_BuidlAfter.cpp" />
+    <ClCompile Include="Base\PhysicsState_BuidlBefore.cpp" />
+    <ClCompile Include="Base\Task.cpp" />
+    <ClCompile Include="Base\TaskManager.cpp" />
+    <ClCompile Include="Base\TowerBase.cpp" />
+    <ClCompile Include="Base\TowerState_Broken.cpp" />
+    <ClCompile Include="Base\TowerState_BuildAfter.cpp" />
+    <ClCompile Include="Base\TowerState_BuildBefore.cpp" />
+    <ClCompile Include="Base\VampireState_Special.cpp" />
+    <ClCompile Include="Effekseer\EffekseerEffect.cpp" />
+    <ClCompile Include="Effekseer\EffekseerManager.cpp" />
+    <ClCompile Include="Game\AttackZone.cpp" />
+    <ClCompile Include="Game\BeastMan_Wolf.cpp" />
+    <ClCompile Include="Game\BuffDebuff.cpp" />
+    <ClCompile Include="Game\Camera.cpp" />
+    <ClCompile Include="Game\Castle.cpp" />
+    <ClCompile Include="Game\Effect.cpp" />
+    <ClCompile Include="Game\ElementTower.cpp" />
+    <ClCompile Include="Game\ElementTowerAttack.cpp" />
+    <ClCompile Include="Game\EnemyAttack.cpp" />
+    <ClCompile Include="Game\EnemyManager.cpp" />
+    <ClCompile Include="Game\Fade.cpp" />
+    <ClCompile Include="Game\Field.cpp" />
+    <ClCompile Include="Game\Game.cpp" />
+    <ClCompile Include="Game\Goblin.cpp" />
+    <ClCompile Include="Game\HPBar.cpp" />
+    <ClCompile Include="Game\BuildMenu_UI.cpp" />
+    <ClCompile Include="Game\Menu.cpp" />
+    <ClCompile Include="Game\Mutant.cpp" />
+    <ClCompile Include="Game\Obstacle.cpp" />
+    <ClCompile Include="Game\Pause_UI.cpp" />
+    <ClCompile Include="Game\PhysicsTower.cpp" />
+    <ClCompile Include="Game\Player.cpp" />
+    <ClCompile Include="Game\PlayerAttack.cpp" />
+    <ClCompile Include="Game\PlayerPushAttack.cpp" />
+    <ClCompile Include="Game\Player_ACT.cpp" />
+    <ClCompile Include="Game\Player_shield.cpp" />
+    <ClCompile Include="Game\Player_sword.cpp" />
+    <ClCompile Include="Game\Player_TD.cpp" />
+    <ClCompile Include="Game\Resource.cpp" />
+    <ClCompile Include="Game\RouteNode.cpp" />
+    <ClCompile Include="Game\RouteNodeManager.cpp" />
+    <ClCompile Include="Game\SkyBox.cpp" />
+    <ClCompile Include="Game\CharaStatus.cpp" />
+    <ClCompile Include="Game\Title.cpp" />
+    <ClCompile Include="Game\TowerAttack.cpp" />
+    <ClCompile Include="Game\Tower_Arrow.cpp" />
+    <ClCompile Include="Game\Tower_Cannon.cpp" />
+    <ClCompile Include="Game\UI.cpp" />
+    <ClCompile Include="Game\UIFrame.cpp" />
+    <ClCompile Include="Game\Vampire.cpp" />
+    <ClCompile Include="imgui\imgui.cpp" />
+    <ClCompile Include="imgui\imgui_demo.cpp" />
+    <ClCompile Include="imgui\imgui_draw.cpp" />
+    <ClCompile Include="imgui\imgui_impl_glfw.cpp" />
+    <ClCompile Include="imgui\imgui_impl_opengl2.cpp" />
+    <ClCompile Include="imgui\imgui_ja_gryph_ranges.cpp" />
+    <ClCompile Include="imgui\imgui_widgets.cpp" />
+    <ClCompile Include="main.cpp" />
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{FE2CE3B1-49BF-46A5-9DB1-9BD5B52FE1A0}</ProjectGuid>
+    <RootNamespace>GameProject</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <WholeProgramOptimization>false</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <WholeProgramOptimization>false</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <OutDir>$(SolutionDir)/../Game/</OutDir>
+    <IntDir>$(SolutionDir)$(Configuration)\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <OutDir>$(SolutionDir)/../Game/</OutDir>
+    <IntDir>$(SolutionDir)$(Configuration)\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <OutDir>$(SolutionDir)/../Game/</OutDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <OutDir>$(SolutionDir)/../Game/</OutDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LocalDebuggerWorkingDirectory>$(SolutionDir)/../Game</LocalDebuggerWorkingDirectory>
+    <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
+    <IntDir>$(SolutionDir)$(Configuration)\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LocalDebuggerWorkingDirectory>$(SolutionDir)/../Game</LocalDebuggerWorkingDirectory>
+    <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
+    <IntDir>$(SolutionDir)$(Configuration)\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <LocalDebuggerWorkingDirectory>$(SolutionDir)/../Game</LocalDebuggerWorkingDirectory>
+    <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <LocalDebuggerWorkingDirectory>$(SolutionDir)/../Game</LocalDebuggerWorkingDirectory>
+    <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>../include;../GLLibrary</AdditionalIncludeDirectories>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>../lib;../Debug</AdditionalLibraryDirectories>
+      <AdditionalDependencies>opengl32.lib;GLFW.lib;glewd.lib;glpng.lib;GLLibrary.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <SubSystem>Console</SubSystem>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>../include;../GLLibrary;$(ProjectDir)</AdditionalIncludeDirectories>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <ForcedIncludeFiles>Global.h</ForcedIncludeFiles>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>opengl32.lib;glfw32lib;glew32s.lib;glpng.lib;GLLibrary.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)lib\x64\$(Configuration);$(SolutionDir)lib\x64</AdditionalLibraryDirectories>
+      <SubSystem>Console</SubSystem>
+      <DelayLoadDLLs>PhysX_64.dll;PhysXCommon_64.dll;PhysXCooking_64.dll;PhysXFoundation_64.dll;%(DelayLoadDLLs)</DelayLoadDLLs>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>../include;../GLLibrary</AdditionalIncludeDirectories>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalLibraryDirectories>../lib;../Release</AdditionalLibraryDirectories>
+      <AdditionalDependencies>opengl32.lib;GLFW.lib;glew.lib;glpng.lib;GLLibrary.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <SubSystem>Windows</SubSystem>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>../include;../GLLibrary;$(ProjectDir)</AdditionalIncludeDirectories>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <ForcedIncludeFiles>Global.h</ForcedIncludeFiles>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalDependencies>opengl32.lib;GLFW32.lib;glew32s.lib;glpng.lib;GLLibrary.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)lib\x64\$(Configuration);$(SolutionDir)lib\x64</AdditionalLibraryDirectories>
+      <SubSystem>Windows</SubSystem>
+      <DelayLoadDLLs>PhysX_64.dll;PhysXCommon_64.dll;PhysXCooking_64.dll;PhysXFoundation_64.dll;%(DelayLoadDLLs)</DelayLoadDLLs>
+      <PerUserRedirection>true</PerUserRedirection>
+    </Link>
+    <ProjectReference>
+      <LinkLibraryDependencies>false</LinkLibraryDependencies>
+    </ProjectReference>
+  </ItemDefinitionGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

@@ -48,7 +48,7 @@
 #include "GLLibrary/CShadow.h"
 #include "GLLibrary/CResource.h"
 #include "GLLibrary/CNetWork.h"
-#include "GLLibrary/CMultiThread.h"
+#include "GLLibrary/CLoadThread.h"
 #include "GLLibrary/CTextureFrame.h"
 #include "GLLibrary/CRendaring.h"
 #ifdef USE_VIDEO_LIB

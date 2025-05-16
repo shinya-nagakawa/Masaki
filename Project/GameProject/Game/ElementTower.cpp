@@ -9,6 +9,7 @@ TowerData towerdate[] = {
 		"Fire_Attack",
 		"Fire_Hit",
 		"Fire_Broken",
+		"FireAttack",
 		1,
 		140,
 		ObjectBase::BuffDebuffType::FireTower_DefenceDebuff,
@@ -22,6 +23,7 @@ TowerData towerdate[] = {
 		"Ice_Attack",
 		"Ice_Hit",
 		"Ice_Broken",
+		"IceAttack",
 		1,
 		10,
 		ObjectBase::BuffDebuffType::IceTower_SpeedDebuff,
@@ -35,6 +37,7 @@ TowerData towerdate[] = {
 		"Thunder_Attack",
 		"Thunder_Hit",
 		"Thunder_Broken",
+		"ThunderAttack",
 		0,
 		60,
 		ObjectBase::BuffDebuffType::ThunderTower_DOTDebuff,
@@ -54,7 +57,6 @@ ElementTower::ElementTower(const CVector3D& pos, Kinds kinds) : TowerBase()
 	m_scale = CVector3D(2.4f, 2.4f, 2.4f);
 	m_height = 1.0f;
 	
-	m_statuspoint = 0;
 	m_kinds = kinds;
 	//ステータスを設定
 	m_status.SetInitialStatus(1, 1.0f, 10.0f, 8.0f);
@@ -68,15 +70,15 @@ ElementTower::ElementTower(const CVector3D& pos, Kinds kinds) : TowerBase()
 	m_debuff.SetBuffDebuff(mp_towerData->DebuffType, mp_towerData->DebuffEffect, mp_towerData->DebuffTime, mp_towerData->DebuffSize, Debuff);
 
 	//State登録
-	m_stateList[(int)TowerState::eState_BuildBefore] = new TowerBase::BuildBefore(this);
-	m_stateList[(int)TowerState::eState_BuildAfter]  = new TowerBase::BuildAfter(this);
-	m_stateList[(int)TowerState::eState_Broken]      = new Element_Broken(this);
+	m_stateList[TowerState::eState_BuildBefore].reset(new TowerBase::BuildBefore(this));
+	m_stateList[TowerState::eState_BuildAfter].reset(new TowerBase::BuildAfter(this));
+	m_stateList[TowerState::eState_Broken].reset(new Element_Broken(this));
 }
 
 ElementTower::~ElementTower(){
 	//削除時にエフェクトが残っていたらエフェクトを削除
-	if (mp_object_Effect) mp_object_Effect->Kill();
-	if (mp_attack_Effect) mp_attack_Effect->Kill();
+	if (mp_object_Effect) mp_object_Effect->SetKill();
+	if (mp_attack_Effect) mp_attack_Effect->SetKill();
 }
 
 void ElementTower::Render(){
@@ -92,6 +94,8 @@ void ElementTower::Attack(){
 	//攻撃開始のエフェクトを生成し、属性タワーの攻撃を生成
 	mp_attack_Effect = new EffekseerEffect(mp_towerData->AttackEffect, m_pos, CVector3D::zero, CVector3D(1.0f, 1.0f, 1.0f));
 	new ElementTowerAttack(m_pos, *this);
+	//属性攻撃サウンドを流す
+	SOUND(mp_towerData->SE)->Play();
 }
 
 void ElementTower::NewHitEffect(const CVector3D& pos) {
@@ -112,7 +116,7 @@ void ElementTower::SetObjectEffect(TowerState state){
 	//もし引数の状態が建造後状態でも倒壊状態でもないなら、以降の処理を行わない
 	if (state != TowerState::eState_BuildAfter && state != TowerState::eState_Broken) return;
 	//現在のオブジェクトエフェクトを削除
-	mp_object_Effect->Kill();
+	mp_object_Effect->SetKill();
 	//もしこれから移行する状態が建造後状態なら建造後状態のエフェクトを生成
 	if (state == TowerState::eState_BuildAfter) {
 		mp_object_Effect = new EffekseerEffect(mp_towerData->ObjectEffect, m_pos + CVector3D(0.0f, m_dist, 0.0f), CVector3D::zero, CVector3D(1.0f, 1.0f, 1.0f), mp_towerData->EffectStart, mp_towerData->EffectEnd, true);

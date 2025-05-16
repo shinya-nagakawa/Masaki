@@ -3,16 +3,13 @@
 /*敵の移動に使用するノード*/
 
 class RouteNode {
-private:
-	std::vector<RouteNode*> m_next;	//次のノード配列
-	CVector3D m_pos;   //座標
-
 public:
 	/// <summary>
 	/// コンストラクタ
 	/// </summary>
-	/// <param name="pos">ノード位置</param>
+	/// <param name="pos">ノード座標</param>
 	RouteNode(const CVector3D& pos);
+
 	/// <summary>
 	/// 次のノードを配列へ追加
 	/// </summary>
@@ -27,16 +24,20 @@ public:
 	/// <summary>
 	/// 次ノード配列の要素数を取得
 	/// </summary>
-	/// <returns></returns>
+	/// <returns>次ノードの要素数</returns>
 	int GetNextSize() const;
 	/// <summary>
 	/// 次のノードがまとめられた配列を取得
 	/// </summary>
-	/// <returns></returns>
+	/// <returns>ノード配列</returns>
 	std::vector<RouteNode*> GetNextList() const;
 	/// <summary>
 	/// 座標を取得
 	/// </summary>
-	/// <returns></returns>
-	CVector3D GetPos() const;
+	/// <returns>座標</returns>
+	const CVector3D GetPos() const;
+
+private:
+	std::vector<RouteNode*> m_next;	//次のノード配列
+	CVector3D m_pos; //座標
 };

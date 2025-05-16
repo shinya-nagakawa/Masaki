@@ -5,6 +5,7 @@
 #include <map>
 #include <string>
 #include <vector>
+
 class CFragShaderCallback {
 public:
 	virtual void SendFragParam() = 0;
@@ -71,8 +72,6 @@ public:
 		@retval	シェーダーインスタンス
 	**/
 	static CShader* CreateInstance(std::string type);
-	static void Add(std::string type, int render_type, CShader* shader);
-
 	/*!
 	@brief	コンストラクタ
 			シェーダオブジェクトの生成のみ
@@ -110,7 +109,6 @@ public:
 	@retval	成否
 	**/
 	bool Load(const char* vertexPath,const char*  fragPath);
-
 	/*!
 	@brief	ファイルからシェーダプログラムを個々に作成
 	@param	path	[in]	シェーダーのファイル名

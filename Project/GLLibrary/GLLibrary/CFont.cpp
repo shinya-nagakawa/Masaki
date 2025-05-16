@@ -121,24 +121,6 @@ void CFont::SetFontSize(int size)
 	m_font->FaceSize(m_size);
 }
 
-int CFont::GetTextWidth(const wchar_t* text)
-{
-	if (m_font && text)
-	{
-		return m_font->Advance(text);
-	}
-	return 0;
-}
-
-int CFont::GetTextHeight() const
-{
-	if (m_font)
-	{
-		return m_font->LineHeight();
-	}
-	return 0;
-}
-
 CFont* CFont::GetInstance(std::string name)
 {
 	if (m_instances.count(name) == 0) m_instances[name] = new CFont();

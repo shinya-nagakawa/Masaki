@@ -5,6 +5,10 @@ TowerBase::BuildAfter::BuildAfter(TowerBase* owner) : State(owner) {
 }
 
 void TowerBase::BuildAfter::Enter() {
+	//当たり判定を行えるよう設定
+	mp_owner->SetIsCollision(true);
+	//タワー建造サウンドを流す
+	SOUND("TowerBuild")->Play();
 }
 
 void TowerBase::BuildAfter::Update() {

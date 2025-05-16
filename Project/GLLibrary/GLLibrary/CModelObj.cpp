@@ -771,7 +771,6 @@ bool CModelObj::LoadMaterial(char *path) {
 		if (strcmp(key, "newmtl") == 0) {
 			m = &m_mesh[m_materialCnt];
 			mat = m_material[m_materialCnt]= new CMaterial();
-			mat->m_shader_name = "StaticMesh";
 			char name[NAME_STR_SIZE];
 			fscanf_s(fp, "%s", name, NAME_STR_SIZE);
 			strcpy_s(mat->m_name, NAME_STR_SIZE, name);
@@ -840,14 +839,13 @@ void CModelObj::Render(CMatrix &m) {
 
 
 	for(int i=0;i<m_materialCnt;i++) {
-
-		CShader* s = m_material[i]->mp_shader = CShader::GetInstance(m_material[i]->m_shader_name);
-		s->Enable();
-		glUniform1f(glGetUniformLocation(s->GetProgram(), "shadow_bias"), m_shadow_bias);
-		glUniform1i(glGetUniformLocation(s->GetProgram(), "toon"), m_toon ? 1 : 0);
-		SendShaderParam(s,m, CCamera::GetCurrent()->GetViewMatrix() * m, CCamera::GetCurrent()->GetProjectionMatrix());
+		m_material[i]->mp_shader = CShader::GetInstance("StaticMesh");
+		m_material[i]->mp_shader->Enable();
+		glUniform1f(glGetUniformLocation(m_material[i]->mp_shader->GetProgram(), "shadow_bias"), m_shadow_bias);
+		glUniform1i(glGetUniformLocation(m_material[i]->mp_shader->GetProgram(), "toon"), m_toon ? 1 : 0);
+		SendShaderParam(m_material[i]->mp_shader,m, CCamera::GetCurrent()->GetViewMatrix() * m, CCamera::GetCurrent()->GetProjectionMatrix());
 		m_mesh[i].Render(m_material[i]);
-		s->Disable();
+		m_material[i]->mp_shader->Disable();
 	}
 
 

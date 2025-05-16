@@ -1,10 +1,12 @@
 #include "TowerAttack.h"
 #include "Tower_Cannon.h"
+#include "../Effekseer/EffekseerEffect.h"
 
 TowerAttack::TowerAttack(const CVector3D& pos, int kinds, CVector3D vec, float speed, const PhysicsTower& owner) : ObjectBase(ePlayer_Attack)
 	, m_owner(owner)
 	, m_kinds(kinds)
-	, m_explosionRange(7.0f){
+	, m_explosionRange(7.0f)
+	, mp_hitEffect(nullptr){
 	m_pos = pos;
 	m_speed = speed;
 	switch (m_kinds)
@@ -17,6 +19,8 @@ TowerAttack::TowerAttack(const CVector3D& pos, int kinds, CVector3D vec, float s
 		m_lineS = m_pos + CVector3D(0.0f, m_height - m_rad, 0.0f);
 		m_lineE = m_pos + CVector3D(0.0f, m_rad, 0.0f);
 		m_scale = CVector3D(3.0f, 3.0f, 3.0f);
+		//弓攻撃サウンドを流す
+		SOUND("ArrowAttack")->Play();
 		break;
 	case Tower_Cannon: {
 		m_model = COPY_RESOURCE("Iron Ball", CModelObj);
@@ -45,6 +49,8 @@ TowerAttack::TowerAttack(const CVector3D& pos, int kinds, CVector3D vec, float s
 			//float s = atan((-b / 2.0f) - root);
 			m_vec = CMatrix::MRotation(s, y, 0.0f).GetFront();
 		}
+		//大砲攻撃サウンドを流す
+		SOUND("CannonAttack")->Play();
 	}
 		break;
 	default:
@@ -116,7 +122,7 @@ void TowerAttack::Collision(Task* t){
 			ObjectBase* b = static_cast<ObjectBase*>(t);
 			if (b->GetModel()->CollisionRay(&c, &n, m_lineS, m_lineE)) {
 				//削除
-				Kill();
+				SetKill();
 			}
 		}
 		break;
@@ -127,8 +133,10 @@ void TowerAttack::Collision(Task* t){
 			if (CCollision::CollisionCapsule(m_lineS, m_lineE, m_rad, c->GetLineS(), c->GetLineE(), c->GetRad())) {
 				//攻撃が命中した敵のTakeDamageを呼び出し
 				c->TakeDamage(m_owner.GetStatus().GetPower(), c->GetStatus().GetDefence(), m_owner.GetStatus().GetLevel(), c->GetStatus().GetLevel());
+				//攻撃ヒットエフェクト生成
+				mp_hitEffect = new EffekseerEffect("Attack_Hit", m_pos, m_rot, CVector3D(1.0f, 1.0f, 1.0f), 0, 30);
 				//削除
-				Kill();
+				SetKill();
 			}
 		}
 		break;
@@ -144,7 +152,7 @@ void TowerAttack::Collision(Task* t){
 			ObjectBase* b = static_cast<ObjectBase*>(t);
 			if (b->GetModel()->CollisionRay(&c, &n, m_lineS, m_lineE)) {
 				//敵のリストを取得し探索
-				auto list = TaskManager::FindObjects(eEnemy);
+				auto list = TaskManager::GetInstance()->FindObjects(eEnemy);
 				for (auto& e : list) {
 					//敵をCharaBase型にキャスト
 					CharaBase* c = static_cast<CharaBase*>(e);
@@ -157,8 +165,10 @@ void TowerAttack::Collision(Task* t){
 						c->TakeDamage(m_owner.GetStatus().GetPower() / 2.0f, c->GetStatus().GetDefence(), m_owner.GetStatus().GetLevel(), c->GetStatus().GetLevel());
 					}
 				}
+				//接地エフェクト生成
+				mp_hitEffect = new EffekseerEffect("Cannon_Land", m_pos, CVector3D::zero, CVector3D(1.5f, 1.5f, 1.5f), 0, 20);
 				//削除
-				Kill();
+				SetKill();
 			}
 		}
 		break;
@@ -169,8 +179,10 @@ void TowerAttack::Collision(Task* t){
 			if (CCollision::CollisionCapsule(m_lineS, m_lineE, m_rad, c->GetLineS(), c->GetLineE(), c->GetRad())) {
 				//攻撃が命中した敵のTakeDamageを呼び出し
 				c->TakeDamage(m_owner.GetStatus().GetPower(), c->GetStatus().GetDefence(), m_owner.GetStatus().GetLevel(), c->GetStatus().GetLevel());
+				//攻撃ヒットエフェクト生成
+				new EffekseerEffect("Cannon_Hit", m_pos, m_rot, CVector3D(0.3f, 0.3f, 0.3f), 0, 60);
 				//削除
-				Kill();
+				SetKill();
 			}
 		}
 		break;

@@ -2,27 +2,11 @@
 #include "../Base/ObjectBase.h"
 #include "PhysicsTower.h"
 
-/*タワーの攻撃 移植が終わり次第削除*/
+/*タワーの攻撃*/
 
 class CharaBase;
 
 class TowerAttack : public ObjectBase {
-private:
-	const PhysicsTower& m_owner; //自身を生成したタワー
-	CModelObj m_model;           //モデルオブジェクト
-	int m_kinds;                 //攻撃の種類判別用
-	float m_speed;               //攻撃の速度
-	float m_explosionRange;      //弾の爆発範囲(大砲で使用)
-	std::vector<CVector3D> m_lines; //白いライン表示用
-	
-	const float gravity = 0.98f / 60 * 0.1; //重力(大砲で使用)
-
-	//タワーの種類
-	enum {
-		Tower_Arrow,   //弓の攻撃
-		Tower_Cannon,  //大砲の攻撃
-	};
-
 public:
 	/// <summary>
 	/// コンストラクタ
@@ -37,6 +21,7 @@ public:
 	/// デストラクタ
 	/// </summary>
 	~TowerAttack();
+
 	/// <summary>
 	/// 更新処理
 	/// </summary>
@@ -50,4 +35,21 @@ public:
 	/// </summary>
 	/// <param name="t">衝突対象</param>
 	void Collision(Task* t) override;
+
+private:
+	CModelObj m_model;           //モデルオブジェクト
+	ObjectBase* mp_hitEffect;     //ヒットエフェクト
+	const PhysicsTower& m_owner; //自身を生成したタワー
+
+	int m_kinds;                 //攻撃の種類判別用
+	float m_speed;               //攻撃の速度
+	std::vector<CVector3D> m_lines; //白いライン表示用(弓矢で使用)
+	float m_explosionRange;         //弾の爆発範囲(大砲で使用)
+	const float gravity = 0.98f / 60.0f * 0.1f; //専用の重力(大砲で使用)
+
+	//タワーの種類
+	enum {
+		Tower_Arrow,   //弓の攻撃
+		Tower_Cannon,  //大砲の攻撃
+	};
 };

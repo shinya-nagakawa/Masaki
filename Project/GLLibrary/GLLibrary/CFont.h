@@ -40,11 +40,6 @@ public:
 
 	void SetFontSize(int size);
 
-	//©•ª‚Å’Ç‰Á‚µ‚Ü‚µ‚½«------------
-	int GetTextWidth(const wchar_t* text);
-	int GetTextHeight() const;
-	//-------------------------------
-
 	static CFont* GetInstance(std::string name);
 	static CFont* CreateInstance(std::string name, const char* font = "‚l‚rƒSƒVƒbƒN", int size = 24);
 	static void ClearInstance();

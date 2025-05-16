@@ -20,7 +20,7 @@ void Mutant::Mutant_Special::Update() {
 		//攻撃/バフの生成タイミングなら
 		if (mp_owner->m_model.GetAnimationFrame() >= m_specialTiming) {
 			//敵のリストを取得し射程範囲内の敵に攻撃力のバフ
-			auto list = TaskManager::FindObjects(eEnemy);
+			auto list = TaskManager::GetInstance()->FindObjects(eEnemy);
 			for (auto& t : list) {
 				CharaBase* b = static_cast<CharaBase*>(t);
 				CVector3D v = b->GetPos() - mp_owner->GetPos();

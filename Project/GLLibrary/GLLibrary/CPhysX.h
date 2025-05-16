@@ -20,32 +20,7 @@ class CMatrix;
 class CVector3D;
 class CVector4D;
 class CQuaternion;
-class CPhysXActor;
-struct SPhysCollisionData {
-	CPhysXActor* actor;
-};
-class CPhysXActor {
-public:
-	/// <summary>
-	/// トリガーコールバック
-	/// </summary>
-	/// <param name="coll"></param>
-	virtual void onTriggerEnter(const SPhysCollisionData& coll){};
-	/// <summary>
-	/// 接触コールバック
-	/// </summary>
-	/// <param name="coll"></param>
-	virtual void onCollisionEnter(const SPhysCollisionData& coll) {};
-	//ここより先調整中
-	virtual void onTriggerStay(const SPhysCollisionData& coll) {};
-	virtual void onCollisionStay(const SPhysCollisionData& coll) {};
-	virtual void onTriggerExit(const SPhysCollisionData& coll) {};
-	virtual void onCollisionExit(const SPhysCollisionData& coll) {};
-};
-struct CPhysXCollisionCore {
-	CPhysXActor* actor[2];
-	SPhysCollisionData data[2];
-};
+
 class CPhysX {
 	// PhysX内で利用するアロケーター
 	physx::PxDefaultAllocator m_defaultAllocator;
@@ -61,7 +36,6 @@ class CPhysX {
 	physx::PxScene* m_pScene = nullptr;
 
 
-	
 	static CPhysX* mp_instance;
 public:
 	CPhysX();

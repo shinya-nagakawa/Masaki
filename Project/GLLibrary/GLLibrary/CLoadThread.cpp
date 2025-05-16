@@ -1,4 +1,4 @@
-#include "CMultiThread.h"
+#include "CLoadThread.h"
 
 CLoadThread *CLoadThread::m_instance;
 CLoadThread::CLoadThread() : m_resourceLoader(nullptr), m_loaded(false)

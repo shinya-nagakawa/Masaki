@@ -106,7 +106,6 @@ public:
 	CVector3D GetFront() const {return CVector3D(m02,m12,m22);}
 	CVector3D GetUp() const {return CVector3D(m01,m11,m21);}
 	CVector3D GetLeft() const {return CVector3D(m00,m10,m20);}
-	CVector3D GetRight() const { return CVector3D(-m00, -m10, -m20); }
 	CVector3D GetPosition() const {return CVector3D(m03,m13,m23);}
 
 	CVector3D GetEuler(int type) const;

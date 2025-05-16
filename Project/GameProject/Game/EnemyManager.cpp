@@ -11,10 +11,10 @@ int EnemyManager::m_deathCount = 0;
 //ステージ1のデータ
 //前の敵が出現してから何秒で出現するか、座標、レベル、リーダーが必要か、敵の種類
 static EnemyItem _Stage1[] = {
-	{ 2.0f, CVector3D(20.0f, 0.0f, -57.0f), 1, false, EnemyBase::Kinds::Goblin},
-	{ 1.0f, CVector3D(20.0f, 0.0f, -57.0f), 1, false, EnemyBase::Kinds::Goblin},
-	{ 1.0f, CVector3D(20.0f, 0.0f, -57.0f), 1, false, EnemyBase::Kinds::Goblin},
-
+	{ 2.0f, CVector3D(20.0f, 0.0f, -57.0f), 1, false, EnemyBase::Kinds::BeastMan_Wolf},
+	{ 1.0f, CVector3D(20.0f, 0.0f, -57.0f), 1, false, EnemyBase::Kinds::BeastMan_Wolf},
+	{ 1.0f, CVector3D(20.0f, 0.0f, -57.0f), 1, false, EnemyBase::Kinds::BeastMan_Wolf},
+	
 	{10.0f, CVector3D(20.0f, 0.0f, -57.0f), 1, false, EnemyBase::Kinds::Goblin},
 	{ 1.0f, CVector3D(20.0f, 0.0f, -57.0f), 1, false, EnemyBase::Kinds::Goblin},
 	{ 1.0f, CVector3D(20.0f, 0.0f, -57.0f), 1, false, EnemyBase::Kinds::Goblin},
@@ -59,7 +59,7 @@ EnemyManager::EnemyManager()
 
 EnemyManager::~EnemyManager(){
 	//エフェクトを削除
-	mp_effect->Kill();
+	mp_effect->SetKill();
 	//敵の死亡カウントを初期化
 	m_deathCount = 0;
 }
@@ -84,18 +84,6 @@ void EnemyManager::Update() {
 		//経過時間計測用変数を0に戻す
 		m_elapsedTime = 0.0f;
 	}
-}
-
-void EnemyManager::AddDeathCount(){
-	m_deathCount++;
-}
-
-int EnemyManager::GetDeathCount(){
-	return m_deathCount;
-}
-
-bool EnemyManager::IsWaveEnd() const{
-	return m_index >= mp_data->size;
 }
 
 void EnemyManager::NewEnemy(EnemyBase::Kinds kinds){
@@ -156,6 +144,22 @@ void EnemyManager::NewEnemy(EnemyBase::Kinds kinds){
 	default:
 		break;
 	}
+}
+
+void EnemyManager::AddDeathCount() {
+	m_deathCount++;
+}
+
+int EnemyManager::GetDeathCount() {
+	return m_deathCount;
+}
+
+int EnemyManager::GetTotalEnemyCount() const{
+	return mp_data->size;
+}
+
+bool EnemyManager::IsWaveEnd() const {
+	return m_index >= mp_data->size;
 }
 
 bool EnemyManager::IsBattleEnd() const{

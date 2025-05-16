@@ -21,6 +21,6 @@ std::vector<RouteNode*> RouteNode::GetNextList() const{
 	return m_next;
 }
 
-CVector3D RouteNode::GetPos() const{
+const CVector3D RouteNode::GetPos() const{
 	return m_pos;
 }

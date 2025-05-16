@@ -36,8 +36,6 @@ public:
 	CTexture *mp_texture;		//テクスチャー
 	CTexture* mp_normal_map;	//法線マップ
 	CShader* mp_shader;
-	std::string m_shader_name;
-
 public:
 	CMaterial();
 	CMaterial(const CMaterial& mat);

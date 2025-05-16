@@ -1,18 +1,19 @@
 #include "Title.h"
-#include "Game.h"
 #include "Menu.h"
+#include "Select.h"
 
 Title::Title() : ObjectBase(eUI)
 	, m_background(COPY_RESOURCE("BackGround", CImage))
 	, m_titleLogo(COPY_RESOURCE("TitleLogo", CImage))
-	, m_text("C:\\Windows\\Fonts\\msgothic.ttc", 96){
+	, m_text("C:\\Windows\\Fonts\\msgothic.ttc", 96)
+	, m_controlFlag(true){
 	//フェードイン開始
 	m_fade.FadeIn();
 }
 
 Title::~Title(){
 	//バフ選択メニューを生成
-	new Menu();
+	new Select();
 }
 
 void Title::Update() {
@@ -21,9 +22,14 @@ void Title::Update() {
 	//クリックしたらフェードアウト開始、フェードアウトが終了すれば削除
 	if (PUSH(CInput::eMouseL)) {
 		m_fade.FadeOut();
+		if (m_controlFlag) {
+			//ゲーム開始サウンドを流す
+			SOUND("GameStart")->Play();
+			m_controlFlag = false;
+		}
 	}
 	if (m_fade.IsFadeOutEnd()) {
-		Kill();
+		SetKill();
 	}
 }
 

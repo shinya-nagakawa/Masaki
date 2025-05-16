@@ -47,11 +47,6 @@ public:
 		eButton11,
 		eButton12,
 		eButton13,
-		eNum1,
-		eNum2,
-		eNum3,
-		eNum4,
-		eNum5,
 		eMouseL,
 		eMouseR,
 		eMouseC,
@@ -161,7 +156,10 @@ public:
 		@param	f		[in] true:表示　false:非表示
 		@retval	無し
 	**/
-	static void ShowCursor(bool f);
+	static void ShowCursor(bool f) {
+		 ::ShowCursor(f);
+		 ::ShowCursor(f);
+	}
 	
 	/*!
 		@brief	マウスホイールの変化量取得

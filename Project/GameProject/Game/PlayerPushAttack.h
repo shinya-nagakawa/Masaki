@@ -5,19 +5,17 @@
 /*プレイヤーの押し出し攻撃*/
 
 class PlayerPushAttack : public ObjectBase {
-private:
-	const Player& m_owner; //自身を生成したプレイヤー
-
 public:
 	/// <summary>
 	/// コンストラクタ
 	/// </summary>
 	/// <param name="owner">自身を生成したプレイヤー</param>
-	PlayerPushAttack(const Player& owner);
+	PlayerPushAttack(Player& owner);
 	/// <summary>
 	/// デストラクタ
 	/// </summary>
 	~PlayerPushAttack();
+
 	/// <summary>
 	/// 更新処理
 	/// </summary>
@@ -27,4 +25,7 @@ public:
 	/// </summary>
 	/// <param name=""></param>
 	void Collision(Task* t) override;
+
+private:
+	const Player& m_owner; //自身を生成したプレイヤー
 };

@@ -2,21 +2,31 @@
 #include "Task.h"
 #include "ObjectBase.h"
 
-int TaskManager::currentLayer = 0;
-std::list<Task*> TaskManager::m_taskList[2];
-std::list<Task*> TaskManager::m_renderList;
-std::list<Task*> TaskManager::m_collisionList;
-std::list<Task*> TaskManager::m_cacheList;
-std::unordered_map<int, std::list<Task*>> TaskManager::m_index;
-std::unordered_map <int, bool> TaskManager::m_indexFlag;
+TaskManager* TaskManager::instance = nullptr;
 
-TaskManager::TaskManager() {
+TaskManager::TaskManager() 
+	: currentLayer(0){
 }
 
 TaskManager::~TaskManager() {
 }
 
-void TaskManager::AddtoTask(Task* add, bool IsShort, int layer) {
+TaskManager* TaskManager::GetInstance(){
+	if (!instance) {
+		instance = new TaskManager();
+	}
+	return instance;
+}
+
+void TaskManager::Clearinstance(){
+	if (!instance) {
+		return;
+	}
+	delete instance;
+	instance = nullptr;
+}
+
+void TaskManager::AddtoTask(Task* add, int layer) {
 	auto itr = m_taskList[layer].begin();
 	auto end = m_taskList[layer].end();
 	add->m_myLayer = layer;
@@ -34,20 +44,6 @@ void TaskManager::AddtoTask(Task* add, bool IsShort, int layer) {
 			}
 			return;
 		}
-		else if (add->m_prio == task->m_prio) {
-			if (add->m_sortOrder < task->m_sortOrder) {
-				m_taskList[layer].insert(itr, add);
-				//もしインデックスを使用するタイプなら、インデックスにも追加
-				if (GetIndexFlag(add->GetType())) {
-					m_index[add->GetType()].push_back(add);
-				}
-				else {
-					//キャッシュを初期化
-					m_cacheList.clear();
-				}
-				return;
-			}
-		}
 		itr++;
 	}
 	m_taskList[layer].push_back(add);
@@ -55,7 +51,7 @@ void TaskManager::AddtoTask(Task* add, bool IsShort, int layer) {
 	m_cacheList.clear();
 }
 
-void TaskManager::AddtoRender(Task* add, bool isShort){
+void TaskManager::AddtoRender(Task* add){
 	auto itr = m_renderList.begin();
 	auto end = m_renderList.end();
 	while (itr != end) {
@@ -64,18 +60,12 @@ void TaskManager::AddtoRender(Task* add, bool isShort){
 			m_renderList.insert(itr, add);
 			return;
 		}
-		else if (add->m_prio == task->m_prio) {
-			if (add->m_sortOrder < task->m_sortOrder) {
-				m_renderList.insert(itr, add);
-				return;
-			}
-		}
 		itr++;
 	}
 	m_renderList.push_back(add);
 }
 
-void TaskManager::AddtoCollision(Task* add, bool isShort){
+void TaskManager::AddtoCollision(Task* add){
 	auto itr = m_collisionList.begin();
 	auto end = m_collisionList.end();
 	while (itr != end) {
@@ -84,18 +74,12 @@ void TaskManager::AddtoCollision(Task* add, bool isShort){
 			m_collisionList.insert(itr, add);
 			return;
 		}
-		else if (add->m_prio == task->m_prio) {
-			if (add->m_sortOrder < task->m_sortOrder) {
-				m_collisionList.insert(itr, add);
-				return;
-			}
-		}
 		itr++;
 	}
 	m_collisionList.push_back(add);
 }
 
-void TaskManager::Remove(Task* remove, bool isShort) {
+void TaskManager::Remove(Task* remove) {
 	m_taskList[remove->m_myLayer].remove(remove);
 	m_renderList.remove(remove);
 	m_collisionList.remove(remove);
@@ -115,7 +99,7 @@ void TaskManager::DeleteChack() {
 
 		while (itr != list.end()) {
 			Task* task = *itr;
-			if (task->m_is_Kill) {
+			if (task->m_isKill) {
 				m_renderList.remove(*itr);
 				m_collisionList.remove(*itr);
 
@@ -164,7 +148,7 @@ void TaskManager::UpdateAll() {
 
 	while (itr != end) {
 		Task* task = *itr;
-		if (task->m_is_Enable) {
+		if (task->m_isEnable) {
 			task->Update();
 		}
 		itr++;
@@ -179,7 +163,7 @@ void TaskManager::DrawAll() {
 		{
 			Task* task = *itr;
 
-			if (task->m_is_Enable && task->m_is_Show) {
+			if (task->m_isEnable && task->m_isShow) {
 				task->Draw();
 			}
 			itr++;
@@ -198,7 +182,7 @@ void TaskManager::RenderAll() {
 		{
 			Task* task = *itr;
 
-			if (task->m_is_Enable && task->m_is_Show) {
+			if (task->m_isEnable && task->m_isShow) {
 				task->Render();
 			}
 			itr++;
@@ -224,7 +208,7 @@ void TaskManager::KillAll() {
 	//タスクリスト内のもの全ての削除フラグをtrueに設定
 	for (auto& list : m_taskList) {
 		for (auto& b : list) {
-			b->Kill();
+			b->SetKill();
 		}
 	}
 }
@@ -311,7 +295,7 @@ Task* TaskManager::FindObjectReverce(int type) {
 Task* TaskManager::FindObjectbyID(unsigned int ID) {
 	for (auto& list : m_taskList) {
 		for (auto& b : list) {
-			if (b->ID == ID && !b->IsKill()) return b;
+			if (b->ID == ID && !b->GetIsKill()) return b;
 		}
 	}
 	return nullptr;
@@ -341,7 +325,7 @@ void TaskManager::LayerChange(){
 	else TaskManager::currentLayer = 0;
 }
 
-int TaskManager::GetLayer(){
+int TaskManager::GetLayer() const{
 	return currentLayer;
 }
 
@@ -354,14 +338,13 @@ void TaskManager::SetIndexFlag(){
 	//Typeをキーとして、インデックスを使用するかのフラグを設定
 	//trueは使用、falseは不使用
 	m_indexFlag = {
-		{eBase, false},
+		{eControl, false},
 		{eCamera, false},
 		{eField, false},
 		{ePlayer, false},
 		{eEnemy, true}, //使う
 		{eCastle, false},
 		{eTower, true}, //使う
-		{eObstacle, false},
 		{ePlayer_Attack, false},
 		{eEnemy_Attack, false},
 		{eEffect, true}, //使う

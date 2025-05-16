@@ -15,11 +15,13 @@ public:
 	/// <summary>
 	/// コンストラクタ
 	/// </summary>
+	/// <param name="speed">透明度変更の速度</param>
 	Fade(float speed = 0.05);
 	/// <summary>
 	/// デストラクタ
 	/// </summary>
 	~Fade();
+
 	/// <summary>
 	/// 更新処理
 	/// </summary>
@@ -28,6 +30,7 @@ public:
 	/// 描画処理
 	/// </summary>
 	void Draw();
+
 	/// <summary>
 	/// フェードイン開始
 	/// </summary>
@@ -44,26 +47,28 @@ public:
 	/// グレーアウト開始
 	/// </summary>
 	void GrayOut();
+
 	/// <summary>
-	/// フェードインが終了しているか
+	/// フェードインが終了しているかを取得
 	/// </summary>
-	/// <returns></returns>
+	/// <returns>フェードインが終了しているか</returns>
 	bool IsFadeInEnd() const;
 	/// <summary>
-	/// フェードアウトが終了しているか
+	/// フェードアウトが終了しているかを取得
 	/// </summary>
-	/// <returns></returns>
+	/// <returns>フェードアウトが終了しているか</returns>
 	bool IsFadeOutEnd() const;
 	/// <summary>
-	/// グレーインが終了しているか
+	/// グレーインが終了しているかを取得
 	/// </summary>
-	/// <returns></returns>
+	/// <returns>グレーインが終了しているか</returns>
 	bool IsGrayInEnd() const;
 	/// <summary>
-	/// グレーアウトが終了しているか
+	/// グレーアウトが終了しているかを取得
 	/// </summary>
-	/// <returns></returns>
+	/// <returns>グレーアウトが終了しているか</returns>
 	bool IsGrayOutEnd() const;
+
 	/// <summary>
 	/// 状態を初期化
 	/// </summary>
@@ -75,16 +80,19 @@ public:
 	/// <summary>
 	/// 自身の状態を取得
 	/// </summary>
-	/// <returns></returns>
+	/// <returns>自身の状態</returns>
 	FadeState GetState() const;
-
+	/// <summary>
+	/// 透明度を取得
+	/// </summary>
+	/// <returns>透明度</returns>
 	float GetAlpha() const;
 
 private:
-	CImage* m_img;  //フェード機能を使いたい画像のポインタ
-	CImage m_black; //黒い画像
-	float m_alpha;  //透明度
-	float m_alpha_;
-	float m_speed;  //透明度を変化させる速度
-	FadeState m_state;
+	CImage* m_img;     //フェード機能を使いたい画像のポインタ
+	CImage m_black;    //フェードに使用する黒い画像
+	float m_alpha;     //透明度
+	float m_alphaImg;  //受け取った画像用の透明度
+	float m_speed;     //透明度を変化させる速度
+	FadeState m_state; //実行中の状態
 };

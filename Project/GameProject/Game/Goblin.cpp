@@ -8,7 +8,7 @@ Goblin::Goblin(const CVector3D& pos, const int level, Kinds kinds, EnemyBase* le
 	m_rad = 0.6f;
 	m_height = 1.6f;
 
-	m_bar_pos = CVector3D(2.5f, 1.8f * 0.1f, -0.5f);
+	m_bar_pos = CVector3D(0.0f, 1.8f * 0.1f, -0.5f);
 	m_attacktiming = 39;
 	mp_leader = leader;
 
@@ -20,4 +20,12 @@ Goblin::Goblin(const CVector3D& pos, const int level, Kinds kinds, EnemyBase* le
 }
 
 Goblin::~Goblin(){
+	//死亡時の関数オブジェクトが設定されていたら呼び出し
+	if (m_onDestroy) {
+		m_onDestroy();
+	}
+}
+
+void Goblin::SetOnDestroy(std::function<void()>&& callback){
+	m_onDestroy = std::move(callback);
 }

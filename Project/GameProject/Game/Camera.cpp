@@ -5,6 +5,7 @@
 Camera::Camera() : ObjectBase(eCamera)
 	, old_GameMode(Game::GameMode)
 	, m_dist(0.0f){
+	m_pos.z = -10.0f;
 }
 
 void Camera::Update() {
@@ -76,7 +77,7 @@ void Camera::Render() {
 		//distを使ったズーム
 		m_dist = min(10.0f, max(2.0f, m_dist - CInput::GetMouseWheel()));
 
-		if (Task* t = TaskManager::FindObject(ePlayer)) {
+		if (Task* t = TaskManager::GetInstance()->FindObject(ePlayer)) {
 			Player* p = static_cast<Player*>(t);
 			CMatrix cam_matrix =
 				CMatrix::MTranselate(p->GetPos())
@@ -99,7 +100,7 @@ void Camera::Render() {
 		//distを使ったズーム
 		m_dist = min(10.0f, max(2.0f, m_dist - CInput::GetMouseWheel()));
 
-		if (Task* t = TaskManager::FindObject(ePlayer)) {
+		if (Task* t = TaskManager::GetInstance()->FindObject(ePlayer)) {
 			ObjectBase* b = static_cast<ObjectBase*>(t);
 			CMatrix cam_matrix =
 				CMatrix::MTranselate(b->GetPos())
@@ -109,7 +110,7 @@ void Camera::Render() {
 			CCamera::GetCurrent()->SetTranseRot(cam_matrix);
 		}
 		//プレイヤーの取得
-		if (Task* t = TaskManager::FindObject(ePlayer))
+		if (Task* t = TaskManager::GetInstance()->FindObject(ePlayer))
 		{
 			Player* p = static_cast<Player*>(t);
 			//プレイヤーの座標(足元)+上に上昇した部分を注視点に設定

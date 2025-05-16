@@ -6,6 +6,7 @@ TowerBase::TowerBase() : CharaBase(eTower)
 	, m_dist(2.0f)
 	, m_drawTime(0.0f)
 	, m_isCanBuild(false)
+	, m_isTarget(false)
 	, m_oldHP(0.0f)
 	, m_state(TowerState::eState_BuildBefore)
 	, m_kinds(Kinds::Tower_Arrow)
@@ -13,14 +14,11 @@ TowerBase::TowerBase() : CharaBase(eTower)
 	, m_baseScale(CVector3D(1.5f, 1.5f, 1.5f)){
 	m_HPBar.SetType(HPBar::Type::eTowerBar);
 	m_HPBar.SetVisibility(false);
-	m_bar_pos = CVector3D(2.4f, 0.0f, -0.8f);
+	m_bar_pos = CVector3D(0.0f, 0.0f, -0.8f);
+	SetIsCollision(false); //最初は当たり判定を行わない
 }
 
 TowerBase::~TowerBase() {
-	//生成した各状態を削除
-	for (auto& s : m_stateList) {
-		delete s.second;
-	}
 }
 
 void TowerBase::Update(){
@@ -36,7 +34,7 @@ void TowerBase::Update(){
 	//HPが0以下なら倒壊状態に移行
 	if (m_status.GetHP() <= 0.0f) ChangeState(TowerState::eState_Broken);
 	//状態毎の処理
-	m_stateList[(int)m_state]->Update();
+	m_stateList[m_state]->Update();
 }
 
 void TowerBase::Render(){
@@ -63,13 +61,13 @@ void TowerBase::ChangeState(TowerState state){
 	//現在の状態と同じ場合は、再度設定し直さない
 	if (state == m_state) return;
 	//現在の状態の終了時処理呼び出し
-	m_stateList[(int)m_state]->Exit();
+	m_stateList[m_state]->Exit();
 	//違う状態であれば、現在の状態に設定し、使用するメンバ変数を初期化
 	m_state = state;
 	m_statestep = 0;
 	InitializeElapsedTime();
 	//変更した状態の開始時処理呼び出し
-	m_stateList[(int)m_state]->Enter();
+	m_stateList[m_state]->Enter();
 }
 
 void TowerBase::DrawHPBar(){
@@ -87,7 +85,7 @@ void TowerBase::DrawHPBar(){
 		//描画時間を0に設定
 		m_drawTime = 0.0f;
 		//徐々にHPバーを透明にする
-		m_HPBar.ChangeTransparent(0.05f);
+		m_HPBar.SetAlpha(m_HPBar.GetAlpha() - 0.05f);
 		//HPバーのアルファ値が0以下なら
 		if (m_HPBar.GetAlpha() <= 0.0f) {
 			//HPバーを描画しないよう設定
@@ -104,11 +102,19 @@ void TowerBase::SetIsCanBuild(bool check){
 	m_isCanBuild = check;
 }
 
+bool TowerBase::GetIsTarget() const{
+	return m_isTarget;
+}
+
+void TowerBase::SetIsTarget(bool isTarget){
+	m_isTarget = isTarget;
+}
+
 void TowerBase::LevelUp(){
 	//現在のレベルが最大レベル以上なら、以降の処理を行わない
 	if (m_status.GetLevel() >= m_status.GetMaxLevel()) return;
 	//プレイヤーを取得しキャスト
-	if (Task* t = TaskManager::FindObject(ePlayer)) {
+	if (Task* t = TaskManager::GetInstance()->FindObject(ePlayer)) {
 		Player* p = static_cast<Player*>(t);
 		//レベルアップに必要なリソースを消費し、レベルアップ
 		p->GetResource().SubtractResource(GetCost(CostName::eLevelUpCost).gold, GetCost(CostName::eLevelUpCost).energy);
@@ -128,7 +134,7 @@ void TowerBase::LevelUp(){
 
 void TowerBase::Repair(){
 	//プレイヤーを取得しキャスト
-	if (Task* t = TaskManager::FindObject(ePlayer)) {
+	if (Task* t = TaskManager::GetInstance()->FindObject(ePlayer)) {
 		Player* p = static_cast<Player*>(t);
 		//自身に使用されたリソースのうち7割を使用し、自身を修復
 		p->GetResource().SubtractResource(GetCost(CostName::eRepairCost).gold, GetCost(CostName::eRepairCost).energy);
@@ -139,11 +145,13 @@ void TowerBase::Repair(){
 
 void TowerBase::Collect(){
 	//プレイヤーを取得しキャスト
-	if (Task* t = TaskManager::FindObject(ePlayer)) {
+	if (Task* t = TaskManager::GetInstance()->FindObject(ePlayer)) {
 		Player* p = static_cast<Player*>(t);
 		//自身に使用されたリソースのうち3割を追加し、自身を削除
 		p->GetResource().AdditionResource(GetCost(CostName::eReturnedCost).gold, GetCost(CostName::eReturnedCost).energy);
-		Kill();
+		SetKill();
+		//タワー回収サウンドを流す
+		SOUND("TowerCollect")->Play();
 	}
 }
 
@@ -171,38 +179,35 @@ const TowerBase::Cost& TowerBase::GetCost(CostName name){
 
 bool TowerBase::IsCanLevelUp(){
 	//プレイヤーを取得しキャスト
-	if (Task* t = TaskManager::FindObject(ePlayer)) {
+	if (Task* t = TaskManager::GetInstance()->FindObject(ePlayer)) {
 		Player* p = static_cast<Player*>(t);
 		//自身のレベルアップコストが現在のリソースより少ないならtrueを返却
 		if (p->GetResource().GetGold() >= m_costList[CostName::eLevelUpCost].gold && p->GetResource().GetEnergy() >= m_costList[CostName::eLevelUpCost].energy) {
 			return true;
 		}
 	}
-
 	return false;
 }
 
 bool TowerBase::IsCanRepair(){
 	//プレイヤーを取得しキャスト
-	if (Task* t = TaskManager::FindObject(ePlayer)) {
+	if (Task* t = TaskManager::GetInstance()->FindObject(ePlayer)) {
 		Player* p = static_cast<Player*>(t);
 		//自身の修復コストが現在のリソースより少ないならtrueを返却
 		if (p->GetResource().GetGold() >= m_costList[CostName::eRepairCost].gold && p->GetResource().GetEnergy() >= m_costList[CostName::eRepairCost].energy) {
 			return true;
 		}
 	}
-
 	return false;
 }
 
 void TowerBase::BuildClear(){
 	//プレイヤーを取得しキャスト
-	if (Task* t = TaskManager::FindObject(ePlayer)) {
-		Player* p = static_cast<Player*>(t);
+	if (Player* p = static_cast<Player*>(TaskManager::GetInstance()->FindObject(ePlayer))) {
 		//自身の建造コストが現在のリソースより少ないなら、リソースからコストを引いて建造を完了させる
-		//if (p->GetResource().GetGold() >= m_costList[CostName::eBuildCost].gold && p->GetResource().GetEnergy() >= m_costList[CostName::eBuildCost].energy) {
+		if (p->GetResource().GetGold() >= m_costList[CostName::eBuildCost].gold && p->GetResource().GetEnergy() >= m_costList[CostName::eBuildCost].energy) {
 			p->GetResource().SubtractResource(m_costList[CostName::eBuildCost].gold, m_costList[CostName::eBuildCost].energy);
 			ChangeState(TowerState::eState_BuildAfter);
-		//}
+		}
 	}
 }

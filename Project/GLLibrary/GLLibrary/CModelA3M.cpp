@@ -746,30 +746,30 @@ void CA3MMesh::Draw(std::vector<CMaterial*>& materialList, CMatrix* send_matrix,
 	}
 	for (auto it = m_poly_list.begin(); it != m_poly_list.end(); it++) {
 		CMaterial* mat = materialList[(*it)->m_material];
-		mat->mp_shader = CShader::GetInstance(mat->m_shader_name);
-		mat->mp_shader->Enable();
-		glUniform1f(glGetUniformLocation(mat->mp_shader->GetProgram(), "shadow_bias"), shadow);
-		glUniform1i(glGetUniformLocation(mat->mp_shader->GetProgram(), "toon"), toon ? 1 : 0);
-		CModel::SendShaderParam(mat->mp_shader,CMatrix::indentity, CCamera::GetCurrent()->GetViewMatrix(), CCamera::GetCurrent()->GetProjectionMatrix());
+		CShader* s = mat->mp_shader;
+		s->Enable();
+		glUniform1f(glGetUniformLocation(s->GetProgram(), "shadow_bias"), shadow);
+		glUniform1i(glGetUniformLocation(s->GetProgram(), "toon"), toon ? 1 : 0);
+		CModel::SendShaderParam(s,CMatrix::indentity, CCamera::GetCurrent()->GetViewMatrix(), CCamera::GetCurrent()->GetProjectionMatrix());
 
 		if (send_matrix) {
-			int MatrixLocation = glGetUniformLocation(mat->mp_shader->GetProgram(), "Transforms");
+			int MatrixLocation = glGetUniformLocation(s->GetProgram(), "Transforms");
 			glUniformMatrix4fv(MatrixLocation, bone_size, GL_FALSE, send_matrix[0].f);
 		}
 		//if (m_vertex_type == A3M::eSkinMesh) {
 //} else {
-		glUniformMatrix4fv(glGetUniformLocation(mat->mp_shader->GetProgram(), "LocalMatrix"), 1, GL_FALSE, lm.f);
-		glUniformMatrix4fv(glGetUniformLocation(mat->mp_shader->GetProgram(), "ModelViewMatrix"), 1, GL_FALSE, mv.f);
-		glUniformMatrix4fv(glGetUniformLocation(mat->mp_shader->GetProgram(), "WorldMatrix"), 1, false, m.f);
+		glUniformMatrix4fv(glGetUniformLocation(s->GetProgram(), "LocalMatrix"), 1, GL_FALSE, lm.f);
+		glUniformMatrix4fv(glGetUniformLocation(s->GetProgram(), "ModelViewMatrix"), 1, GL_FALSE, mv.f);
+		glUniformMatrix4fv(glGetUniformLocation(s->GetProgram(), "WorldMatrix"), 1, false, m.f);
 		//}
 
-		glUniform1i(glGetUniformLocation(mat->mp_shader->GetProgram(), "useSkin"), *mp_enable_animation ? m_use_skin : 0);
+		glUniform1i(glGetUniformLocation(s->GetProgram(), "useSkin"), *mp_enable_animation ? m_use_skin : 0);
 
 
 		mat->Map();
-		(*it)->Draw(mat->mp_shader);
+		(*it)->Draw(s);
 		mat->Unmap();
-		mat->mp_shader->Disable();
+		s->Disable();
 	}
 }
 
@@ -1314,7 +1314,7 @@ CModelA3M::CModelA3M(const CModelObj& m) : m_bone_num(0), m_bone_matrix(nullptr)
 			glBindBuffer(GL_ARRAY_BUFFER, 0);
 		}
 		CMaterial* mat = new CMaterial(*m.m_material[i]);
-		mat->m_shader_name = "SkinMesh";
+		mat->mp_shader = CShader::GetInstance("SkinMesh");
 		m_material_list.push_back(mat);
 
 	}
@@ -2435,7 +2435,7 @@ void CModelA3M::LoadToyMaterial(pugi::xml_node& pNode)
 	pugi::xml_node color_node = pNode.child("Material");
 	if (!color_node) return;
 	CMaterial* mat = new CMaterial();
-	mat->m_shader_name = "SkinMesh";
+	mat->mp_shader = CShader::GetInstance("SkinMesh");
 
 	pugi::xml_attribute color_attr = color_node.attribute("Color");
 	CVector3D color;
@@ -2800,7 +2800,7 @@ bool CModelA3M::Load(const char* filePath, int cut_x, int cut_y, int cut_z)
 		else
 			fread(m->m_name, sizeof(SA3MaterialCHK2), 1, fp);
 
-		m->m_shader_name = "SkinMesh";
+		m->mp_shader = CShader::GetInstance("SkinMesh");
 		if (strlen(m->m_texture_name) > 0) {
 			m->mp_texture = new CTexture();
 

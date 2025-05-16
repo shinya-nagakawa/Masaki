@@ -28,7 +28,7 @@
     <ClCompile Include="GLLibrary\CLight.cpp">
       <Filter>GLLibrary</Filter>
     </ClCompile>
-    <ClCompile Include="GLLibrary\CMultiThread.cpp">
+    <ClCompile Include="GLLibrary\CLoadThread.cpp">
       <Filter>GLLibrary</Filter>
     </ClCompile>
     <ClCompile Include="GLLibrary\CMatrix.cpp">
@@ -111,7 +111,7 @@
     <ClInclude Include="GLLibrary\CLight.h">
       <Filter>GLLibrary</Filter>
     </ClInclude>
-    <ClInclude Include="GLLibrary\CMultiThread.h">
+    <ClInclude Include="GLLibrary\CLoadThread.h">
       <Filter>GLLibrary</Filter>
     </ClInclude>
     <ClInclude Include="GLLibrary\CMatrix.h">

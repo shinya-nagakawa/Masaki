@@ -111,17 +111,17 @@ CMatrix CMatrix::MRotation(const CQuaternion& q)
 	float wz = q.w * q.z;
 
 	ret.m00 = 1.0f - 2.0f * (sy + sz);
-	ret.m10 = 2.0f * (cz + wz);
-	ret.m20 = 2.0f * (cy - wy);
-	ret.m01 = 2.0f * (cz - wz);
+	ret.m01 = 2.0f * (cz + wz);
+	ret.m02 = 2.0f * (cy - wy);
+	ret.m10 = 2.0f * (cz - wz);
 	ret.m11 = 1.0f - 2.0f * (sx + sz);
-	ret.m21 = 2.0f * (cx + wx);
-	ret.m02 = 2.0f * (cy + wy);
-	ret.m12 = 2.0f * (cx - wx);
+	ret.m12 = 2.0f * (cx + wx);
+	ret.m20 = 2.0f * (cy + wy);
+	ret.m21 = 2.0f * (cx - wx);
 	ret.m22 = 1.0f - 2.0f * (sx + sy);
-	ret.m03 = 0.0f;
-	ret.m13 = 0.0f;
-	ret.m23 = 0.0f;
+	ret.m30 = 0.0f;
+	ret.m31 = 0.0f;
+	ret.m32 = 0.0f;
 	return ret;
 }
 CMatrix CMatrix::MRotationAxis(float vx, float vy, float vz, float r){

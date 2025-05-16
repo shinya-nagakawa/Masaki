@@ -54,11 +54,11 @@ bool CVideoTextrue::video_reader_open(const char* filename) {
     // Find the first valid video stream inside the file
     video_stream_index = -1;
     audio_stream_index = -1;
-    AVCodecParameters* av_codec_params = nullptr;
+    AVCodecParameters* av_codec_params=nullptr;
     AVCodecParameters* audio_codec_params = nullptr;
     AVCodecParameters* video_codec_params = nullptr;
     AVStream* audio_stream = nullptr;
-    const AVCodec* av_codec = nullptr;
+    const AVCodec* av_codec=nullptr;
     const AVCodec* video_codec = nullptr;
     const AVCodec* audio_codec = nullptr;
     for (unsigned int i = 0; i < av_format_ctx->nb_streams; ++i) {
@@ -87,7 +87,7 @@ bool CVideoTextrue::video_reader_open(const char* filename) {
     av_frame = av_frame_alloc();
     av_packet = av_packet_alloc();
     if (audio_stream != nullptr) {
-
+    
 
         audio_codec_ctx = avcodec_alloc_context3(audio_codec);
         if (audio_codec_ctx == NULL) {
@@ -152,7 +152,7 @@ bool CVideoTextrue::video_decode_audio() {
     std::list<uint8_t*> buffer_list;
     uint8_t* buf = NULL;
     int buf_size = 0;
-    int buf_count = 0;
+    int buf_count=0;
     while (av_read_frame(av_format_ctx, av_packet) >= 0) {
         if (av_packet->stream_index == video_stream_index) {
 
@@ -209,13 +209,13 @@ bool CVideoTextrue::video_decode_audio() {
 
         }
         av_packet_unref(av_packet);
-
+       
     }
     if (!swr_ctx) return false;
-    CSoundBase* s = nullptr;
+    CSoundBase* s=nullptr;
     m_sound = SOUND(m_file_name.c_str());
     m_swr_buf_len = buf_size * buf_count;
-    uint8_t* p = m_swr_buf = new uint8_t[m_swr_buf_len];
+    uint8_t *p = m_swr_buf = new uint8_t[m_swr_buf_len];
     for (auto b : buffer_list) {
         memcpy(p, b, buf_size);
         p += buf_size;
@@ -252,7 +252,7 @@ bool CVideoTextrue::video_reader_read_frame(uint8_t* frame_buffer, int64_t* pts)
 
     // Decode one frame
     int response;
-    //   av_seek_frame(av_format_ctx, video_stream_index, *pts, AVSEEK_FLAG_BACKWARD);
+ //   av_seek_frame(av_format_ctx, video_stream_index, *pts, AVSEEK_FLAG_BACKWARD);
     while (av_read_frame(av_format_ctx, av_packet) >= 0) {
         if (av_packet->stream_index == video_stream_index) {
             response = avcodec_send_packet(video_codec_ctx, av_packet);
@@ -296,7 +296,7 @@ bool CVideoTextrue::video_reader_read_frame(uint8_t* frame_buffer, int64_t* pts)
     int dest_linesize[4] = { width * 4, 0, 0, 0 };
     sws_scale(sws_scaler_ctx, av_frame->data, av_frame->linesize, 0, av_frame->height, dest, dest_linesize);
 
-
+   
     return true;
 }
 
@@ -309,7 +309,7 @@ bool CVideoTextrue::video_reader_seek_frame(int64_t ts) {
     auto& video_stream_index = m_state.video_stream_index;
     auto& av_frame = m_state.av_frame;
     auto& av_packet = m_state.av_packet;
-
+  
     av_seek_frame(av_format_ctx, video_stream_index, ts, AVSEEK_FLAG_BACKWARD);
 
     // av_seek_frame takes effect after one frame, so I'm decoding one here
@@ -356,18 +356,16 @@ void CVideoTextrue::video_reader_close() {
     avcodec_free_context(&m_state.audio_codec_ctx);
 }
 
-CVideoTextrue::CVideoTextrue(const char* filename) : m_time(0), m_speed_scale(1),m_sound(nullptr)
+CVideoTextrue::CVideoTextrue(const char* filename) : m_time(0), m_speed_scale(1)
 {
-    if (!video_reader_open(filename)) {
+    if(!video_reader_open(filename)) {
         char str[256] = "";
         sprintf_s(str, 256, "%s‚Ì“Ç‚Ýž‚Ý‚ÉŽ¸”s‚µ‚Ü‚µ‚½\n", filename);
         MessageBox(GL::hWnd, str, "", MB_OK);
     }
-
     constexpr int ALIGNMENT = 128;
     m_width = m_state.width;
     m_height = m_state.height;
-    m_duration = m_state.av_format_ctx->duration / (float)AV_TIME_BASE;
     if (!(m_data = (unsigned char*)_aligned_malloc(static_cast<size_t>(m_state.width) * m_state.height * 4, ALIGNMENT))) {
         printf("Couldn't allocate frame buffer\n");
         return;
@@ -377,7 +375,7 @@ CVideoTextrue::CVideoTextrue(const char* filename) : m_time(0), m_speed_scale(1)
 
 void CVideoTextrue::RenderFrame()
 {
-
+ 
     if (m_speed_scale == 0) return;
     if (m_sound) {
         m_time = m_sound->GetOffset();
@@ -385,18 +383,12 @@ void CVideoTextrue::RenderFrame()
     else {
         m_time += CFPS::GetDeltaTime() * m_speed_scale;
     }
-    // m_state.av_frame->pts = uint64_t(m_time * (double)m_state.time_base.den / (double)m_state.time_base.num);
-    int64_t next_pts = uint64_t(m_time * (double)m_state.time_base.den / (double)m_state.time_base.num);
-    while (next_pts > m_state.av_frame->pts) {
-        int64_t pts = m_state.av_frame->pts = next_pts;
-        if (!video_reader_read_frame(m_data, &pts)) {
-            printf("Couldn't load video frame\n");
-            return;
-        }
+    m_state.av_frame->pts = uint64_t(m_time * (double)m_state.time_base.den / (double)m_state.time_base.num);
+    int64_t pts = m_state.av_frame->pts;
+    if (!video_reader_read_frame(m_data, &pts)) {
+        printf("Couldn't load video frame\n");
+        return;
     }
-    int64_t end_pts = uint64_t(m_duration * (double)m_state.time_base.den / (double)m_state.time_base.num);
-    if (((m_sound && m_sound->CheckEnd()) || (next_pts >= end_pts)) && m_loop)
-        Play(m_loop);
 
 
 
@@ -425,32 +417,20 @@ void CVideoTextrue::Release()
     CTexture::Release();
 }
 
-void CVideoTextrue::Play(bool loop)
+void CVideoTextrue::Play()
 {
 
     video_reader_seek_frame(0);
-    if (m_sound) m_sound->Play();
+    if(m_sound) m_sound->Play();
     m_speed_scale = 1.0f;
     m_time = 0;
-    m_loop = loop;
-    m_state.av_frame->pts = 0;
 }
 
 void CVideoTextrue::Stop()
 {
 
-    if (m_sound) m_sound->Stop();
+    if(m_sound) m_sound->Stop();
     m_speed_scale = 0;
-}
-
-bool CVideoTextrue::isEnd()
-{
-    int64_t next_pts = uint64_t(m_time * (double)m_state.time_base.den / (double)m_state.time_base.num);
-    int64_t end_pts = uint64_t(m_duration * (double)m_state.time_base.den / (double)m_state.time_base.num);
-    if (((m_sound && m_sound->CheckEnd()) || (next_pts >= end_pts)) && !m_loop)
-        return true;
-
-    return false;
 }
 
 CVideo::CVideo(const char* filename)
@@ -469,9 +449,9 @@ void CVideo::Draw()
     CImage::Draw();
 }
 
-void CVideo::Play(bool loop)
+void CVideo::Play()
 {
-    mp_video_texture->Play(loop);
+    mp_video_texture->Play();
 }
 
 void CVideo::Stop()

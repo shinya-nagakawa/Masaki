@@ -39,7 +39,7 @@ void ParticleEffect::Update() {
 	m_scale += m_scale_speed;
 	m_alpha += m_alpha_speed;
 	if (m_time > 0) m_time--;
-	if (m_alpha < 0 || m_scale < 0 || m_time == 0) Kill();
+	if (m_alpha < 0 || m_scale < 0 || m_time == 0) SetKill();
 }
 
 void ParticleEffect::Render() {
@@ -96,7 +96,7 @@ void MagicEffect::Update() {
 	}
 	//íœ
 	if (m_time <= 0) {
-		Kill();
+		SetKill();
 	}
 	//‰ñ“]
 	m_rot.y += DtoR(1.0f);
@@ -133,7 +133,7 @@ void UVEffect::Update() {
 	m_st += m_st_vec;
 	//íœ
 	if (m_time <= 0) {
-		Kill();
+		SetKill();
 	}
 }
 

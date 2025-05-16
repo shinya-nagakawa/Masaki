@@ -31,9 +31,12 @@ EffekseerEffect::~EffekseerEffect() {
 }
 
 void EffekseerEffect::Update() {
+	m_frame += CFPS::GetDeltaTime() * 60;
 	if (m_loop > 0) {
+
+
 		m_frame += CFPS::GetDeltaTime() * 60;
-		if (m_frame >= m_end-1) {
+		if (m_frame >= m_end - 1) {
 			EffekseerManager::GetInstance()->GetManager()->StopEffect(m_handle);
 			m_generate = true;
 			m_frame = 0;
@@ -47,7 +50,7 @@ void EffekseerEffect::Update() {
 	else {
 		//再生終了チェック
 		if (!EffekseerManager::isInstance() || !EffekseerManager::GetInstance()->GetManager()->Exists(m_handle)) {
-			Kill();
+			SetKill();
 		}
 	}
 }

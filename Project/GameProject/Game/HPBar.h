@@ -15,16 +15,18 @@ public:
 	/// <summary>
 	/// コンストラクタ
 	/// </summary>
-	/// <param name="Scale">大きさ</param>
+	/// <param name="Scale">スケール</param>
 	HPBar(float Scale);
 	/// <summary>
 	/// デストラクタ
 	/// </summary>
 	~HPBar();
+
 	/// <summary>
 	/// 描画処理
 	/// </summary>
 	void Draw();
+
 	/// <summary>
 	/// バーのタイプを設定
 	/// </summary>
@@ -33,17 +35,17 @@ public:
 	/// <summary>
 	/// 座標を設定
 	/// </summary>
-	/// <param name="pos"></param>
+	/// <param name="pos">設定する座標</param>
 	void SetPos(CVector3D pos);
 	/// <summary>
 	/// スケールを設定
 	/// </summary>
-	/// <param name="scale"></param>
+	/// <param name="scale">設定するスケール</param>
 	void SetScale(float scale);
 	/// <summary>
 	/// 残りのHP割合を取得
 	/// </summary>
-	/// <param name="par"></param>
+	/// <param name="par">HP割合</param>
 	void SetValue(float par);
 	/// <summary>
 	/// 表示するかを設定
@@ -52,27 +54,28 @@ public:
 	void SetVisibility(bool b) {
 		m_visibility = b;
 	}
+
 	/// <summary>
-	/// 徐々に透明にする
-	/// </summary>
-	/// <param name="speed">透明化する速度(最大値は1)</param>
-	void ChangeTransparent(float speed);
-	/// <summary>
-	/// 透明度を初期化
+	/// アルファ値を初期化
 	/// </summary>
 	void InitializeAlpha();
 	/// <summary>
 	/// アルファ値を取得
 	/// </summary>
-	/// <returns></returns>
-	float GetAlpha();
+	/// <returns>アルファ値</returns>
+	float GetAlpha() const;
+	/// <summary>
+	/// アルファ値を設定
+	/// </summary>
+	/// <param name="alpha">アルファ値</param>
+	void SetAlpha(float alpha);
 
 private:
-	CImage m_img;
-	Type m_type;
-	CVector3D m_pos;
-	float m_par;
-	float m_bar_scale;
-	float m_alpha;
-	bool m_visibility;
+	CImage m_img;      //画像データ
+	Type m_type;       //タイプ
+	CVector3D m_pos;   //座標
+	float m_par;       //現在の割合
+	float m_bar_scale; //スケール
+	float m_alpha;     //透明度
+	bool m_visibility; //表示するか
 };

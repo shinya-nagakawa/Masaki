@@ -1,34 +1,51 @@
 #include "UI.h"
+#include "Game.h"
 #include "Player.h"
-#include "Castle.h"
+#include "../Base/CharaBase.h"
+#include "EnemyManager.h"
 
-UI::UI(const CVector3D& pos, int UI_Number) : ObjectBase(eUI)
+UI::UI() : ObjectBase(eUI)
 	,m_text("C:\\Windows\\Fonts\\msgothic.ttc", 32) {
-	ui_number = UI_Number;
-	m_pos = pos;
+	SetPriority((int)TaskPrio::UI); //描画優先度をUIに設定
 }
 
 UI::~UI() {
 }
 
 void UI::Draw() {
-	if (Task* t =TaskManager::FindObject(ePlayer)) {
-		Player* p = static_cast<Player*>(t);
-		//残りリソース表示
-		m_text.Draw(10, 30 * 2, 0.0f, 0.0f, 0.0f, "残りリソース ゴールド : %d エネルギー : %d", p->GetResource().GetGold(), p->GetResource().GetEnergy());
+	//城を取得
+	if (CharaBase* c = static_cast<CharaBase*>(TaskManager::GetInstance()->FindObject(eCastle))) {
+		c->GetHPBar().SetValue((float)c->GetStatus().GetHP() / c->GetStatus().GetMaxHP());
+		//城のHPバーを描画(城のHPバーのみUIの優先度で表示)
+		c->GetHPBar().Draw();
 	}
-	//操作表示
-	m_text.Draw(10, 30 * 4, 0.0f, 0.0f, 0.0f, "Space:ゲーム開始 左Shiftで倍速");
-	m_text.Draw(10, 30 * 5, 0.0f, 0.0f, 0.0f, "Q:タワー建造メニュー→左クリックで決定→左クリックで位置確定");
-	m_text.Draw(10, 30 * 6, 0.0f, 0.0f, 0.0f, "建造中に右クリックでキャンセル");
-	m_text.Draw(10, 30 * 7, 0.0f, 0.0f, 0.0f, "アクション時 左クリック:押し出し 右クリック:ダッシュ Q:タワーバフ");
-	m_text.Draw(1500, 30 * 2, 0.0f, 0.0f, 0.0f, "城のHP :");
-	
-	//ゲームオーバーの表示
-	if (Task* t = TaskManager::FindObject(eCastle)) {
-		CharaBase* c = static_cast<CharaBase*>(t);
-		if (c->GetStatus().GetHP() <= 0) {
-			//m_text.Draw(900, 500, 0, 0, 0, "Gameover");
+	m_text.Draw(10, 30 * 2, 1.0f, 1.0f, 1.0f, "城のHP :");
+
+	//プレイヤーを取得
+	if (Player* p = static_cast<Player*>(TaskManager::GetInstance()->FindObject(ePlayer))) {
+		//現在のリソース表示
+		m_text.Draw(10, 30 * 3 + 5, 1.0f, 1.0f, 1.0f, "残りリソース ゴールド : %d エネルギー : %d", p->GetResource().GetGold(), p->GetResource().GetEnergy());
+		p->GetHPBar().Draw();
+	}
+
+	//現在のゲーム速度表示
+	m_text.Draw(10, 30 * 4 + 5, 1.0f, 1.0f, 1.0f, "現在のゲーム速度 : %.1f倍速", CFPS::GetTimeScale());
+
+	//もしチュートリアルではないなら
+	if (!CharaBase::GetIsTutorial()) {
+		//敵管理クラスをGameクラスから取得
+		if (Game* g = static_cast<Game*>(TaskManager::GetInstance()->FindObject(eControl))) {
+			//残りの敵の数表示
+			m_text.Draw(10, 30 * 5 + 5, 1.0f, 1.0f, 1.0f, "残り敵数 %d / %d", g->GetEnemyManager().GetTotalEnemyCount() - g->GetEnemyManager().GetDeathCount(), g->GetEnemyManager().GetTotalEnemyCount());
 		}
+
+		//操作説明表示
+		m_text.Draw(1270, 30 * 2, 1.0f, 1.0f, 1.0f, "Space:ゲーム開始 左Shiftでゲーム速度倍速");
+		m_text.Draw(1080, 30 * 3, 1.0f, 1.0f, 1.0f, "Q:建造メニュー→左クリック:選択→左クリック:位置確定");
+		m_text.Draw(1430, 30 * 4, 1.0f, 1.0f, 1.0f, "建造中に右クリックでキャンセル");
+		m_text.Draw(1285, 30 * 5, 1.0f, 1.0f, 1.0f, "タワーにカーソルを重ねて E:レベルアップ");
+		m_text.Draw(1590, 30 * 6, 1.0f, 1.0f, 1.0f, "倒壊時 R:修復 F:回収");
+		m_text.Draw(1335, 30 * 7, 1.0f, 1.0f, 1.0f, "アクション時 左クリック:押し出し攻撃");
+		m_text.Draw(1400, 30 * 8, 1.0f, 1.0f, 1.0f, "右クリック:ダッシュ Q:タワーバフ");
 	}
 }

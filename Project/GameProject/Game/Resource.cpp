@@ -24,7 +24,7 @@ void Resource::Update() {
 	//リソースの取得効率を更新
 	SetAddEfficiency();
 	//城があるとき
-	if (TaskManager::FindObject(eCastle)) {
+	if (TaskManager::GetInstance()->FindObject(eCastle)) {
 		//クールタイムが終わっていなければ
 		if (m_CT >= m_elapsedTime) {
 			//デルタタイムを加算
@@ -40,11 +40,11 @@ void Resource::Update() {
 	}
 }
 
-int Resource::GetGold() {
+int Resource::GetGold() const{
 	return m_gold;
 }
 
-int Resource::GetEnergy(){
+int Resource::GetEnergy() const{
 	return m_energy;
 }
 
@@ -66,7 +66,7 @@ void Resource::AddGold() {
 
 void Resource::SetAddEfficiency() {
 	//城を取得しキャスト
-	if (Castle* c = static_cast<Castle*>(TaskManager::FindObject(eCastle))) {
+	if (Castle* c = static_cast<Castle*>(TaskManager::GetInstance()->FindObject(eCastle))) {
 		//500を基準に城のレベルによって追加されるリソース量を決定
 		m_addEfficiency = 500 * c->GetLevel();
 	}

@@ -14,6 +14,8 @@ class CFPS {
 	static int fps;
 	static int m_Setfps;
 	static float deltaTime;
+	static float timeScale;
+
 public:
 	/*!
 		@brief	‰Šú‰»‚ğs‚¤
@@ -37,13 +39,16 @@ public:
 	@brief	Œ»İ‚ÌdeltaTime‚ğæ“¾
 	@retval	deltaTime
 	**/
-	static float GetDeltaTime() { return deltaTime; }
+	static float GetDeltaTime() { return deltaTime * timeScale; }
 	static LONGLONG GetTimeCnt();
+	static float GetTimeScale();
 	///<summary>
 	///<para>FPS‚ğİ’è‚µ‚Ü‚·</para>
 	///<para>1`60‚Ü‚Åİ’è‚Å‚«‚Ü‚·</para>
 	///</summary>
 	static void SetFPS(int fps);
+
+	static void SetTimeScale(float scale);
 
 };
 

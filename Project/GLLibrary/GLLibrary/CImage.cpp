@@ -18,7 +18,6 @@ bool CImage::Load(const char* filename, TexAnimData* d, int width, int height){
 		AttachAnimationData(d, width, height);
 		if(d) SetSize((float)width, (float)height);
 		else SetSize((float)m_width, (float)m_height);
-		mp_texture->SetFilter(GL_NEAREST);
 		return true;
 	} else {
 		char str[256]="";

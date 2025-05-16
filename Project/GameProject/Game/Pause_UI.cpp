@@ -5,7 +5,6 @@ Pause_UI::Pause_UI() : ObjectBase(eUI)
 	//UIフレームの子にUIWindowを生成
 	UIBase* window = new UIWindow(mp_UIFrame, u8"Pause", CVector2D::zero, 
 		ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoResize);
-
 }
 
 Pause_UI::~Pause_UI(){
@@ -16,10 +15,10 @@ Pause_UI::~Pause_UI(){
 void Pause_UI::Draw(){
 	//Enterキー レイヤーを切り替えて更新処理を停止
 	if (PUSH(CInput::eButton10)) {
-		TaskManager::LayerChange();
+		TaskManager::GetInstance()->LayerChange();
 	}
 	//レイヤーが1なら(ポーズ中なら)
-	if (TaskManager::GetLayer() == 1) {
+	if (TaskManager::GetInstance()->GetLayer() == 1) {
 		//UIフレームを描画
 		mp_UIFrame->Draw();
 	}

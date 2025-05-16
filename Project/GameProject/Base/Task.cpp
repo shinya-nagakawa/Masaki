@@ -14,73 +14,90 @@ std::unordered_map<int, std::vector<int>> collisionRules = {
 
 Task::Task(int type, int prio)
 	: m_prio(prio)
-	, m_sortOrder(0)
-	, m_is_Enable(true)
-	, m_is_Show(true)
-	, m_is_Kill(false)
+	, m_isEnable(true)
+	, m_isShow(true)
+	, m_isKill(false)
 	, m_elapsedTime(0.0f)
 	, m_type(type)
 	, m_myLayer(0){
 	//タスクマネージャーに自身を追加
-	TaskManager::AddtoTask(this);
+	TaskManager::GetInstance()->AddtoTask(this);
 	//オブジェクトをにIDを割り振る
 	ID = ++Base_ID;
 }
 
 Task::~Task() {
-	TaskManager::Remove(this);
-}
-
-void Task::SetPriority(int prio) {
-	m_prio = prio;
-	TaskManager::Remove(this, true);
-	TaskManager::AddtoTask(this, true);
+	TaskManager::GetInstance()->Remove(this);
 }
 
 int Task::GetPriority() const {
 	return m_prio;
 }
 
-void Task::SetSortOrder(int order) {
-	m_sortOrder = order;
-	TaskManager::Remove(this, true);
-	TaskManager::AddtoTask(this, true);
-}
-
-int Task::GetSortOrder() const {
-	return m_sortOrder;
-}
-
-void Task::SetType(int type) {
-	m_type = type;
+void Task::SetPriority(int prio) {
+	m_prio = prio;
+	TaskManager::GetInstance()->Remove(this);
+	TaskManager::GetInstance()->AddtoTask(this, true);
 }
 
 int Task::GetType() const {
 	return m_type;
 }
 
-void Task::SetEnable(bool enable) {
-	m_is_Enable = enable;
+void Task::SetType(int type) {
+	m_type = type;
 }
 
-bool Task::IsEnable() const {
-	return m_is_Enable;
+bool Task::GetIsEnable() const {
+	return m_isEnable;
+}
+
+void Task::SetEnable(bool enable) {
+	m_isEnable = enable;
+}
+
+bool Task::GetIsShow() const {
+	return m_isShow;
 }
 
 void Task::SetShow(bool show) {
-	m_is_Show = show;
+	m_isShow = show;
 }
 
-bool Task::IsShow() const {
-	return m_is_Show;
+bool Task::GetIsKill() const {
+	return m_isKill;
 }
 
-void Task::Kill() {
-	m_is_Kill = true;
+void Task::SetKill() {
+	m_isKill = true;
 }
 
-bool Task::IsKill() const {
-	return m_is_Kill;
+unsigned int Task::GetID() const {
+	return ID;
+}
+
+void Task::InitializeElapsedTime() {
+	m_elapsedTime = 0.0f;
+}
+
+float Task::GetElapsedTime() const {
+	return m_elapsedTime;
+}
+
+void Task::SetElapsedTime(float deltaTime) {
+	m_elapsedTime += deltaTime;
+}
+
+bool Task::GetLastCollision() const{
+	return m_lastCollision;
+}
+
+std::list<Task*> Task::GetCollisionList(){
+	return m_collisionList;
+}
+
+void Task::SetCollisionList(std::list<Task*> collisionList){
+	m_collisionList = collisionList;
 }
 
 void Task::Update() {
@@ -93,8 +110,4 @@ void Task::Render() {
 }
 
 void Task::Collision(Task* t) {
-}
-
-void Task::InitializeElapsedTime(){
-	m_elapsedTime = 0.0f;
 }

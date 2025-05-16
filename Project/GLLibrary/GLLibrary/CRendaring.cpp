@@ -133,7 +133,6 @@ CFowardRendering::~CFowardRendering()
 }
 void CFowardRendering::Render(std::function<void()> render,bool update_shadow)
 {
-	return;
 	CRendaring::m_type = CRendaring::RendringType::eForward;
 	//モデルの描画
 	//A.影付き描画
@@ -259,7 +258,7 @@ void CFowardRendering::Render(std::function<void()> render,bool update_shadow)
 		CTextureFrame::Draw(0, 0, m_scene->GetWidth(), m_scene->GetHeight(), m_scene->GetTexture());
 	}
 
-	//CTextureFrame::Draw(0, 0, 200, 200, m_gbuffer->GetTexture());
+	//CTextureFrame::Draw(0, 0, 200, 200, CShadow::GetInstance()->mp_render_target[0]->GetDepthTexture());
 
 
 	//デプステストON

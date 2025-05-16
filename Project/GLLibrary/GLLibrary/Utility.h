@@ -2,6 +2,7 @@
 #include "GL.h"
 #include "CMatrix.h"
 #include "CRect.h"
+#include<list>
 class CCamera;
 class COBB;
 namespace Utility {
@@ -118,6 +119,66 @@ namespace Utility {
 	void DrawQuad(const CVector3D vertex[], int count, const CVector4D& color, const CMatrix& mat);
 	void DrawCircle(const CVector2D vertex[], const int count,const CVector2D& pos, const CVector4D& color);
 	void DrawSector(const CMatrix& mat, const float start, const float end, const float size, const CVector4D& color);
+
+	/// <summary>
+	/// なめらかな円を表示
+	/// </summary>
+	/// <param name="pos">表示位置</param>
+	/// <param name="size">円の大きさ</param>
+	/// <param name="color">色</param>
+	void DrawSmoothCircle(const CVector3D& pos, const float size, const CVector4D& color);
+
+	//引数で渡された対象とマウスカーソルの当たった座標
+	template <typename T>
+	CVector3D GetCrossSingle(T* target) {
+		//マウスの座標(スクリーン座標)
+		CVector3D MousePos = CInput::GetMousePoint();
+		//線分の長さを決める
+		float dist = 0.99f;
+		//スクリーン座標をワールド座標に変換
+		//線分に使う変数(始点と終点)
+		//ワールド座標 近
+		CVector3D Mouse_W_near = Utility::ScreenToWorld(CVector3D(MousePos.x, MousePos.y, 0.0f));
+		//ワールド座標 遠
+		CVector3D Mouse_W_far = Utility::ScreenToWorld(CVector3D(MousePos.x, MousePos.y, dist));
+
+		//マウスのワールド座標近からワールド座標遠への線分 と フィールドモデルとの当たり判定
+		//接触点と法線
+		CVector3D cross, normal;
+		//ターゲットが存在しているかつ、ターゲットとレイの当たり判定が成功した場合
+		if (target && target->GetModel()->CollisionRay(&cross, &normal, Mouse_W_near, Mouse_W_far)) {
+			return cross;
+		}
+		//値が取得できなかった場合、0を返す
+		return CVector3D::zero;
+	}
+
+	//引数で渡されたリスト内の対象とマウスカーソルの当たった座標を返却
+	template <typename T>
+	static CVector3D GetCrossMultiple(const std::list<T*>& targetList) {
+		//マウスの座標(スクリーン座標)
+		CVector3D MousePos = CInput::GetMousePoint();
+		//線分の長さを決める
+		float dist = 0.99f;
+		//スクリーン座標をワールド座標に変換
+		//線分に使う変数(始点と終点)
+		//ワールド座標 近
+		CVector3D Mouse_W_near = Utility::ScreenToWorld(CVector3D(MousePos.x, MousePos.y, 0.0f));
+		//ワールド座標 遠
+		CVector3D Mouse_W_far = Utility::ScreenToWorld(CVector3D(MousePos.x, MousePos.y, dist));
+
+		//マウスのワールド座標近からワールド座標遠への線分 と フィールドモデルとの当たり判定
+		//接触点と法線
+		CVector3D cross, normal;
+		//ターゲットが存在しているかつ、ターゲットとレイの当たり判定が成功した場合
+		for (auto& target : targetList) {
+			if (target && target->GetModel()->CollisionRay(&cross, &normal, nearPos, farPos)) {
+				return cross;
+			}
+		}
+		//値が取得できなかった場合、0を返す
+		return CVector3D::zero;
+	}
 }
 
 #define RtoD(x) Utility::RadianToDgree(x)

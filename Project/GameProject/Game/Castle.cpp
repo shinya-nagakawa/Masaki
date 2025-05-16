@@ -2,20 +2,29 @@
 #include "Resource.h"
 #include "HPBar.h"
 #include "EnemyManager.h"
+#include "../Base/CharaBase.h"
 
 Castle::Castle(const CVector3D& pos) : CharaBase(eCastle) 
-	, m_model(COPY_RESOURCE("Castle", CModelObj))
 	, m_control(true){
+	//チュートリアルではないなら
+	if (!CharaBase::GetIsTutorial()) {
+		m_model = COPY_RESOURCE("Castle", CModelObj);
+		m_rad = 17.0f;
+	}
+	//チュートリアルなら
+	else {
+		m_model = COPY_RESOURCE("TutorialTower", CModelObj);
+		m_rad = 2.5f;
+	}
 	m_pos = pos;
 	m_rot += CVector3D(0.0f, DtoR(315.0f), 0.0f);
-	m_rad = 17.0f;
 	m_scale = CVector3D(0.4f, 0.4f, 0.4f);
 	m_lineS = m_pos + CVector3D(15.0f, 0.0f, -2.0f);
 	m_lineE = m_pos + CVector3D(2.0f, 0.0f, -15.0f);
 
 	m_status.SetInitialStatus(1, 0.0f/*使わない*/, 0.0f/*使わない*/, 0.0f/*使わない*/);
 
-	m_HPBar.SetPos(CVector3D(1630.0f, 30.0f, 30.0f));
+	m_HPBar.SetPos(CVector3D(1770.0f, 30.0f, 30.0f));
 	m_HPBar.SetType(HPBar::Type::eEnemyBar);
 	m_HPBar.SetVisibility(true);
 }
@@ -41,7 +50,7 @@ void Castle::Update() {
 		m_status.SetHP(0.0f);
 	}
 	//HPバーの設定
-	m_HPBar.SetPos(CVector3D(1630.0f, 30.0f, 30.0f));
+	m_HPBar.SetPos(CVector3D(300.0f, 30.0f, 30.0f));
 	m_HPBar.SetScale(0.2f);
 	m_HPBar.SetValue(m_status.GetHP() / m_status.GetMaxHP());
 }
@@ -56,8 +65,10 @@ void Castle::Render() {
 
 void Castle::GetDamage(int Damage) {
 	m_status.SetHP(m_status.GetHP() - Damage / 5.0f);
+	//被弾サウンドを流す
+	SOUND("EnemyAttack")->Play();
 }
 
-int Castle::GetLevel(){
+int Castle::GetLevel() const{
 	return m_status.GetLevel();
 }

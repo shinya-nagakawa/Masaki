@@ -23,7 +23,6 @@ void CharaStatus::SetInitialStatus(int level, float speed, float range, float CT
 
 void CharaStatus::LevelUp() {
 	//レベル、最大HP、HP、攻撃力、防御力のみ上昇
-	//上昇する値は考える
 	baseStatus.Level++;
 	baseStatus.MaxHP++;
 	currentStatus.HP++;
@@ -63,7 +62,6 @@ void CharaStatus::ResetStatus() {
 }
 
 void CharaStatus::UpdateBaseStatus() {
-	//レベルアップでbaseに加算するので必要ない？
 	baseStatus = currentStatus;
 }
 
@@ -83,19 +81,19 @@ void CharaStatus::SetCurrentStatus(const Status& setStatus){
 	currentStatus = setStatus;
 }
 
-const int CharaStatus::GetMaxLevel() const{
+int CharaStatus::GetMaxLevel() const{
 	return currentStatus.MaxLevel;
 }
 
-const int CharaStatus::GetLevel() const{
+int CharaStatus::GetLevel() const{
 	return currentStatus.Level;
 }
 
-const float CharaStatus::GetMaxHP() const{
+float CharaStatus::GetMaxHP() const{
 	return currentStatus.MaxHP;
 }
 
-const float CharaStatus::GetHP() const{
+float CharaStatus::GetHP() const{
 	return currentStatus.HP;
 }
 
@@ -103,23 +101,23 @@ void CharaStatus::SetHP(float HP){
 	currentStatus.HP = HP;
 }
 
-const float CharaStatus::GetSpeed() const{
+float CharaStatus::GetSpeed() const{
 	return currentStatus.Speed;
 }
 
-const float CharaStatus::GetPower() const{
+float CharaStatus::GetPower() const{
 	return	currentStatus.Power;
 }
 
-const float CharaStatus::GetDefence() const{
+float CharaStatus::GetDefence() const{
 	return currentStatus.Defence;
 }
 
-const float CharaStatus::GetRange() const{
+float CharaStatus::GetRange() const{
 	return currentStatus.Range;
 }
 
-const float CharaStatus::GetCT() const{
+float CharaStatus::GetCT() const{
 	return currentStatus.CT;
 }
 

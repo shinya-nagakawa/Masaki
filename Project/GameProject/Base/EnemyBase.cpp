@@ -15,15 +15,16 @@ EnemyBase::EnemyBase(Kinds kinds) : CharaBase(eEnemy)
 	, mp_EnemyAttack(nullptr)
 	, m_knockbackPower(CVector3D::zero)
 	, m_IsCanTarget(true)
+	, m_isAttackEnd(false)
 	, m_state(EnemyState::eState_Idle)
 	, m_oldState(EnemyState::eState_Idle)
 	, m_kinds(kinds){
 	//汎用的なState登録(特殊なものは継承先で取り換え)
-	m_stateList[(int)EnemyState::eState_Idle]   = new Idle(this);
-	m_stateList[(int)EnemyState::eState_Walk]   = new Walk(this);
-	m_stateList[(int)EnemyState::eState_Attack] = new Attack(this);
-	m_stateList[(int)EnemyState::eState_Hit]    = new Hit(this);
-	m_stateList[(int)EnemyState::eState_Die]    = new Die(this);
+	m_stateList[EnemyState::eState_Idle].reset(new Idle(this));
+	m_stateList[EnemyState::eState_Walk].reset(new Walk(this));
+	m_stateList[EnemyState::eState_Attack].reset(new Attack(this));
+	m_stateList[EnemyState::eState_Hit].reset(new Hit(this));
+	m_stateList[EnemyState::eState_Die].reset(new Die(this));
 	//HPバーを生成
 	m_HPBar.SetType(HPBar::Type::eEnemyBar);
 	//HPバーを表示
@@ -31,10 +32,6 @@ EnemyBase::EnemyBase(Kinds kinds) : CharaBase(eEnemy)
 }
 
 EnemyBase::~EnemyBase(){
-	//生成した各状態を削除
-	for (auto& s : m_stateList) {
-		delete s.second;
-	}
 	//敵の死亡数カウントを加算
 	EnemyManager::AddDeathCount();
 }
@@ -89,7 +86,7 @@ void EnemyBase::Update(){
 	}
 
 	//状態毎の更新
-	m_stateList[(int)m_state]->Update();
+	m_stateList[m_state]->Update();
 	//アニメーション更新
 	m_model.UpdateAnimation();
 }
@@ -100,15 +97,6 @@ void EnemyBase::Render(){
 	m_model.SetScale(m_scale);
 	m_model.Render();
 	//Utility::DrawCapsule(m_lineS, m_lineE, m_rad, CVector4D(1.0f, 0.0f, 0.0f, 0.5f));
-
-	//この処理は考え直す 行列を返す関数を作らないと、腕のボーンの位置は敵によって違う
-	if (mp_EnemyAttack) {
-		//敵の攻撃を腕に設定
-		/*
-		mp_EnemyAttack->m_lineS = m_model.GetFrameMatrix(13) * CVector4D(0.0f, 0.0f, 0.0f, 1.0f);
-		mp_EnemyAttack->m_lineE = m_model.GetFrameMatrix(13) * CVector4D(10.0f, 0.0f, 0.0f, 1.0f);
-		*/
-	}
 }
 
 void EnemyBase::Collision(Task* t){
@@ -159,18 +147,37 @@ void EnemyBase::Collision(Task* t){
 }
 
 void EnemyBase::ChangeState(EnemyState state){
-	//現在の状態と同じ場合は、再度設定し直さない
+	//チュートリアル中なら、関数を抜ける
+	if (CharaBase::GetIsTutorial()) return;
+	//現在の状態と同じ場合は、再度設定し直さず関数を抜ける
 	if (state == m_state) return;
 	//変更前の状態を設定
 	m_oldState = m_state;
 	//現在の状態の終了時処理呼び出し
-	m_stateList[(int)m_state]->Exit();
+	m_stateList[m_state]->Exit();
 	//違う状態であれば、現在の状態に設定し、使用するメンバ変数を初期化
 	m_state = state;
 	m_statestep = 0;
 	InitializeElapsedTime();
 	//変更した状態の開始時処理呼び出し
-	m_stateList[(int)m_state]->Enter();
+	m_stateList[m_state]->Enter();
+}
+
+void EnemyBase::ChangeStateInTutorial(EnemyState state) {
+	//チュートリアル中ではないなら、関数を抜ける
+	if (!CharaBase::GetIsTutorial()) return;
+	//現在の状態と同じ場合は、再度設定し直さず関数を抜ける
+	if (state == m_state) return;
+	//変更前の状態を設定
+	m_oldState = m_state;
+	//現在の状態の終了時処理呼び出し
+	m_stateList[m_state]->Exit();
+	//違う状態であれば、現在の状態に設定し、使用するメンバ変数を初期化
+	m_state = state;
+	m_statestep = 0;
+	InitializeElapsedTime();
+	//変更した状態の開始時処理呼び出し
+	m_stateList[m_state]->Enter();
 }
 
 RouteNode* EnemyBase::GetTargetNode() const{
@@ -253,9 +260,15 @@ void EnemyBase::AddFollowerList(EnemyBase* follower){
 }
 
 void EnemyBase::SetAttackPos(){
+	//チュートリアル中なら、攻撃座標を自身の座標に設定し関数を抜ける
+	if (CharaBase::GetIsTutorial()) {
+		m_attackPos = m_pos;
+		return;
+	}
+
 	for (int i = 0; i < EnemyManager::m_maxEnemy; i++) {
 		//フィールドを取得しキャスト
-		Task* t = TaskManager::FindObject(eField);
+		Task* t = TaskManager::GetInstance()->FindObject(eField);
 		if (Field* f = static_cast<Field*>(t)) {
 			//攻撃座標を検索し結果を取得
 			std::optional<CVector3D> result = f->GetAttackZone().OccupyPoint(i);
@@ -268,7 +281,7 @@ void EnemyBase::SetAttackPos(){
 			}
 			//結果が座標ではないなら
 			else {
-				//攻撃座標を現在の座標に設定？
+				//攻撃座標を現在の座標に設定
 				m_attackPos = m_pos;
 			}
 		}
@@ -277,7 +290,7 @@ void EnemyBase::SetAttackPos(){
 
 void EnemyBase::ReleaseOccupation(){
 	//フィールドを取得
-	Task* t = TaskManager::FindObject(eField);
+	Task* t = TaskManager::GetInstance()->FindObject(eField);
 	if (Field* f = static_cast<Field*>(t)) {
 		//自身の座標の占領を解放
 		f->GetAttackZone().ReleaseAttackPos(m_attackPosNumber, m_attackPos);

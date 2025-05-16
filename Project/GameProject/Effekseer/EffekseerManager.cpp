@@ -263,14 +263,15 @@ EffekseerManager::EffekseerManager() :Task(eEffect, (int)TaskPrio::Effect){
 		std::u16string efk;
 	}
 	efk_data[] = {
-        { "Player_Attack" ,u"effect/Effekseer/NextSoft01/Player_Attack.efk" },                 //プレイヤーの攻撃★
+        { "Player_Attack" ,u"effect/Effekseer/NextSoft01/Player_Attack.efk" },                 //プレイヤーの攻撃
         { "Circle",u"effect/Effekseer/MAGICALxSPIRAL/Circle.efk" },                            //敵の出現位置サークル
-        { "EnemyAttack_Scratch" ,u"effect/Effekseer/MAGICALxSPIRAL/EnemyAttack_Scratch.efk" }, //敵のひっかき攻撃★
-        { "EnemyAttack_Upper" ,u"effect/Effekseer/MAGICALxSPIRAL/EnemyAttack_Upper.efk" },     //敵のアッパー攻撃★
-        { "Die" ,u"effect/Effekseer/MAGICALxCircle/Die.efk" },                                 //敵の死亡(使わないかも)
+        { "Attack_Hit",u"effect/Effekseer/MAGICALxSPIRAL/Attack_Hit.efk" },                    //汎用的な攻撃命中エフェクト
+        { "EnemyAttack_Roar",u"effect/Effekseer/MAGICALxSPIRAL/EnemyAttack_Roar.efk" },        //敵の咆哮攻撃のエフェクト
         { "Tower_LevelUp" ,u"effect/Effekseer/MAGICALxSPIRAL/LevelUp.efk" },                   //タワーレベルアップ時のエフェクト
         { "Tower_Broken" ,u"effect/Effekseer/AndrewFM01/TowerBroken.efk" },                    //タワー倒壊時のエフェクト
         { "Tower_Heal" ,u"effect/Effekseer/NextSoft01/TowerHeal.efk" },                        //タワー復活時のエフェクト
+        { "Cannon_Hit" ,u"effect/Effekseer/Effekseer01/Cannon_Hit.efk" },                      //大砲の砲弾の敵命中エフェクト
+        { "Cannon_Land" ,u"effect/Effekseer/MAGICALxSPIRAL/Cannon_Land.efk" },                 //大砲の砲弾の地面命中エフェクト
         { "Fire_Object" ,u"effect/Effekseer/NextSoft01/Fire_Object.efk" },                     //炎タワーのオブジェクト
         { "Fire_Attack" ,u"effect/Effekseer/MAGICALxSPIRAL/Fire_Attack.efk" },                 //炎タワーの攻撃
         { "Fire_Hit" ,u"effect/Effekseer/MAGICALxSPIRAL/Fire_Hit.efk" },                       //炎タワーのヒット
@@ -365,7 +366,7 @@ EffekseerManager::~EffekseerManager(){
 
 void EffekseerManager::ClearInstance(){
 	if (!m_instance) return;
-	EffekseerManager::GetInstance()->Kill();
+	EffekseerManager::GetInstance()->SetKill();
 }
 
 void EffekseerManager::Update() {

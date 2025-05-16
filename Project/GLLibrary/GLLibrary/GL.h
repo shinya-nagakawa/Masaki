@@ -18,7 +18,7 @@
 //#define FREEGLUT_STATIC
 //#include <freeglut.h>
 #define AL_LIBTYPE_STATIC
-//#include <AL/alut.h>
+#include <AL/alut.h>
 namespace GL {
 	extern GLFWwindow* window;
 	extern RECT window_rect;

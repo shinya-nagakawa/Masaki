@@ -57,7 +57,7 @@ void CModel::MakePath(const char* filenPath) {
 	else strcpy_s(m_filePath,PATH_SIZE,"");
 
 }
-CModel::CModel() : m_pos(0, 0, 0), m_rot(0, 0, 0), m_scale(1, 1, 1), m_baserot(0, 0, 0), m_filePath(""), m_shadow_bias(0.001), m_toon(false) {
+CModel::CModel() : m_pos(0.0f, 0.0f, 0.0f), m_rot(0.0f, 0.0f, 0.0f), m_scale(1.0f, 1.0f, 1.0f), m_baserot(0.0f, 0.0f, 0.0f), m_filePath(""), m_shadow_bias(0.00001f), m_toon(false) {
 
 }
 CModel* CModel::CreateModel(const char* path, int cut_x, int cut_y, int cut_z) {
@@ -146,14 +146,14 @@ void CModel::CalcTangentAndBinormal(
 
 
 CMaterial::CMaterial() : m_ambient(1, 1, 1, 1), m_diffuse(1, 1, 1, 1), m_specular(0, 0, 0),
-	m_emissive(0, 0, 0), m_shininess(1), m_alpha(1.0f), m_texture_name(""), m_normal_map_name(""),m_st(0, 0), mp_texture(NULL), mp_normal_map(NULL), mp_shader(nullptr), m_shader_name("") {
+	m_emissive(0, 0, 0), m_shininess(1), m_alpha(1.0f), m_texture_name(""), m_normal_map_name(""),m_st(0, 0), mp_texture(NULL), mp_normal_map(NULL), mp_shader(nullptr) {
 	memset(m_name, 0, sizeof(m_name));
 	memset(m_texture_name, 0, sizeof(m_texture_name));
 	memset(m_normal_map_name, 0, sizeof(m_normal_map_name));
 
 }
 CMaterial::CMaterial(const CMaterial & mat) :m_ambient(mat.m_ambient),m_diffuse(mat.m_diffuse),m_specular(mat.m_specular),
-		m_emissive(mat.m_emissive),m_shininess(mat.m_shininess),m_alpha(mat.m_alpha), m_st(mat.m_st), mp_texture(mat.mp_texture),mp_normal_map(mat.mp_normal_map), mp_shader(mat.mp_shader),m_shader_name(mat.m_shader_name)
+		m_emissive(mat.m_emissive),m_shininess(mat.m_shininess),m_alpha(mat.m_alpha), m_st(mat.m_st), mp_texture(mat.mp_texture),mp_normal_map(mat.mp_normal_map),mp_shader(mat.mp_shader)
 {
 	strcpy_s(m_name,sizeof(m_name), mat.m_name);
 	strcpy_s(m_texture_name,sizeof(m_texture_name),mat.m_texture_name);

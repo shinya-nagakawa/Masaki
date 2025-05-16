@@ -7,6 +7,7 @@ LARGE_INTEGER CFPS::time_buf;
 int CFPS::fps;
 int CFPS::m_Setfps = 60;
 float CFPS::deltaTime;
+float CFPS::timeScale = 1.0f;
 
 void CFPS::Init(){
 	//時間計測用
@@ -21,6 +22,9 @@ LONGLONG CFPS::GetTimeCnt() {
 	LARGE_INTEGER time;
 	QueryPerformanceCounter(&time);
 	return time.QuadPart/(freq.QuadPart/ m_Setfps);
+}
+float CFPS::GetTimeScale(){
+	return timeScale;
 }
 void CFPS::Wait() {
 	//freq.QuadPart　	1秒当たりのカウント数（固定）
@@ -49,6 +53,10 @@ void CFPS::Wait() {
 void CFPS::SetFPS(int fps)
 {
 	m_Setfps = fps;
+}
+
+void CFPS::SetTimeScale(float scale) {
+	timeScale = scale;
 }
 
 

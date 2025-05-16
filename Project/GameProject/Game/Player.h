@@ -1,83 +1,25 @@
 #pragma once
 #include "../Base/CharaBase.h"
-#include "Player_sword.h"
-#include "Player_shield.h"
-#include "Resource.h"
 #include "BuffDebuff.h"
+#include "Resource.h"
 
-/*プレイヤー 後にクラス分け 状態管理はステートパターンで*/
+/*プレイヤー 共通の要素を持つ*/
 
-class TowerBase;    //TD
-class BuildMenu_UI; //TD
+class PlayerMode;
 
 class Player : public CharaBase {
-private:
-	Sword m_sword;         //剣のモデル(ACT)
-	Shield m_shield;       //盾のモデル(ACT)
-	BuffDebuff m_buff;     //与えることのできるバフ(両方)
-	Resource m_resource;   //リソース(両方)
-	std::unique_ptr<BuildMenu_UI> UI; //建造メニューのUI(TD)
-	TowerBase* mp_new_t;   //建てようとしているタワーのポインター(TD)
-	CModelA3M m_model;     //モデルオブジェクト(ACT)
-	CVector3D m_key_dir;   //キーから取得した移動方向(ACT)
-	int m_towerKinds;      //新しく建てるタワーの種類(TD)
-	float m_bufftiming;    //バフを生成するタイミング(両方)
-	float m_stamina;       //スタミナ(ACT)
-	bool m_IsCanBuild;     //タワーを建てられるか(TD)
-
-	/// <summary>
-	/// 待機状態(両方)
-	/// </summary>
-	void StateIdle();
-	/// <summary>
-	/// 移動(歩く)(ACT)
-	/// </summary>
-	void StateWalk();
-	/// <summary>
-	/// 移動(走る)(ACT)
-	/// </summary>
-	void StateDash();
-	/// <summary>
-	/// 攻撃(ACT)
-	/// </summary>
-	void StateAttack();
-	/// <summary>
-	/// タワーを建てる(TD)
-	/// </summary>
-	void StateBuild();
-	/// <summary>
-	/// タワーにバフを与える(両方)
-	/// </summary>
-	void StateBuff();
-	/// <summary>
-	/// キー入力による移動(ACT)
-	/// </summary>
-	void Move();
-	/// <summary>
-	/// スタミナ回復(両方かACT)
-	/// </summary>
-	void StaminaRecover();
-	/// <summary>
-	/// crossを使った建造可能かの判定(TD)
-	/// </summary>
-	/// <returns></returns>
-	void CheckBuild();
-	/// <summary>
-	/// 建造済のタワーの詳細確認(両方?)
-	/// </summary>
-	void CheckTower();
-
 public:
 	/// <summary>
 	/// コンストラクタ
 	/// </summary>
-	/// <param name="pos">出現位置</param>
-	/// <param name="playerBuff">プレイヤーが持つバフ</param>
-	Player(const CVector3D& pos, BuffDebuff playerBuff);
+	/// <param name="initialMode">ゲーム開始時のモード</param>
+	/// <param name="playerBuff">プレイヤーがタワーへ与えることのできるバフ</param>
+	Player(PlayerMode* initialMode, BuffDebuff playerBuff);
 	/// <summary>
 	/// デストラクタ
 	/// </summary>
 	~Player();
+
 	/// <summary>
 	/// 更新処理
 	/// </summary>
@@ -92,46 +34,135 @@ public:
 	/// <param name="t">衝突対象</param>
 	void Collision(Task* t) override;
 	/// <summary>
-	/// モデルを返却
+	/// モデルを取得
 	/// </summary>
 	/// <returns>自身のモデル</returns>
 	CModel* GetModel() override {
 		return &m_model;
 	}
+	CModelA3M* GetModelA3M() {
+		return &m_model;
+	}
 
-	//Gameクラスで使用するためpublicに
+	//プレイヤーのアニメーション番号
+	enum AnimNumber {
+		AnimIdle,
+		AnimWalk,
+		AnimDash = 5,
+		AnimAttack = 9,
+		AnimBuff = 11,
+	};
+
 	//プレイヤーの状態
-	enum class State {
+	enum class PlayerState {
 		Idle,        //待機
-		Walk,        //歩く
-		Dash,        //走る
+		Walk,        //移動(歩き)
+		Dash,        //移動(走り)
 		Attack,      //攻撃
 		Build,       //タワーの建造
-		Buff,        //バフの生成
+		Buff,        //バフ生成
 	};
-	State m_state;   //状態
 	/// <summary>
-	/// 状態切り替え(両方)
+	/// 状態切り替え
 	/// </summary>
 	/// <param name="state">切り替える状態</param>
-	void ChangeState(State state);
+	void ChangeState(PlayerState state);
 	/// <summary>
-	/// タワー建造の中断(TD)
+	/// チュートリアル時専用の状態切り替え
 	/// </summary>
-	void BuildInterruption();
+	/// <param name="state">切り替える状態</param>
+	void ChangeStateInTutorial(PlayerState state);
 	/// <summary>
-	/// 指定された種類に合わせてタワーを生成(TD)
+	/// 現在の状態を取得
 	/// </summary>
-	void NewTower();
+	/// <returns></returns>
+	PlayerState GetState() const;
 	/// <summary>
-	/// 建てるタワーの種類を設定(TD)
+	/// 状態を設定
 	/// </summary>
-	void SetTowerKinds(int newkinds);
+	/// <param name="state"></param>
+	void SetState(PlayerState state);
+
+	/// <summary>
+	/// モード切替
+	/// </summary>
+	/// <param name="newMode"></param>
+	void ChangeMode(PlayerMode* newMode);
+
+	/// <summary>
+	/// プレイヤーのバフを取得
+	/// </summary>
+	/// <returns>自身が与えることのできるバフ</returns>
+	const BuffDebuff& GetBuff() const;
+
 	/// <summary>
 	/// リソースを取得
 	/// </summary>
-	/// <returns></returns>
+	/// <returns>現在のリソース</returns>
 	const Resource& GetResource() const;
-
 	Resource& GetResource();
+
+	/// <summary>
+	/// 残りスタミナを取得
+	/// </summary>
+	/// <returns>残りスタミナ</returns>
+	float GetStamina() const;
+	/// <summary>
+	/// スタミナを設定
+	/// </summary>
+	/// <param name="stamina">スタミナ</param>
+	void SetStamina(float stamina);
+	/// <summary>
+	/// スタミナ回復
+	/// </summary>
+	void StaminaRecover();
+
+	/// <summary>
+	/// バフを発動するのに必要なパワーを取得
+	/// </summary>
+	/// <returns>バフを発動するのに必要なパワー</returns>
+	float GetBuffPower() const;
+	/// <summary>
+	/// バフを発動するのに必要なパワーを消費
+	/// </summary>
+	void ConsumptionBuffPower();
+	/// <summary>
+	/// バフを発動するのに必要なパワーの最大値を取得
+	/// </summary>
+	/// <returns>バフを発動するのに必要なパワーの最大値</returns>
+	float GetMaxBuffPower() const;
+
+	/// <summary>
+	/// 建てるタワーの種類を取得
+	/// </summary>
+	/// <returns>建てるタワーの種類</returns>
+	int GetTowerKinds() const;
+	/// <summary>
+	/// 建てるタワーの種類を設定
+	/// </summary>
+	/// <param name="newkinds">建てるタワーの種類</param>
+	void SetTowerKinds(int newkinds);
+
+	/// <summary>
+	/// 建造が完了しているか取得
+	/// </summary>
+	/// <returns>建造が完了しているか</returns>
+	bool GetIsBuildClear() const;
+	/// <summary>
+	/// 建造が完了しているか設定
+	/// </summary>
+	/// <param name="isBuildClear">建造が完了しているか</param>
+	void SetIsBuildClear(bool isBuildClear);
+	
+private:
+	std::unique_ptr<PlayerMode> m_currentMode; //現在のモード
+	CModelA3M m_model;    //モデルオブジェクト
+	BuffDebuff m_buff;    //与えることのできるバフ
+	Resource m_resource;  //リソース
+	PlayerState m_state;  //状態
+	float m_stamina;      //スタミナ
+	float m_buffPower;    //バフを発動するのに必要なパワー
+	float m_maxBuffPower; //バフを発動するのに必要なパワーの最大値
+	int m_towerKinds;     //新しく建てるタワーの種類
+	bool m_isBuildClear;  //タワーを建て終わったか
 };

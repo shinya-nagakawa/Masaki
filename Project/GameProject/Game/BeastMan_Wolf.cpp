@@ -13,23 +13,25 @@ BeastMan_Wolf::BeastMan_Wolf(const CVector3D& pos, const int level, Kinds kinds,
 	m_attacktiming = 25;
 	mp_leader = leader;
 	//ステータスを設定
-	m_status.SetInitialStatus(level, 2.0f, 3.5f, 0.0f/*後で設定*/);
+	m_status.SetInitialStatus(level, 2.0f, 3.5f, 0.0f);
 
-	//State登録(BeastMan_Wolfの移動、特殊行動)
-	delete m_stateList[(int)EnemyState::eState_Walk];
-	m_stateList[(int)EnemyState::eState_Walk] = new BeastMan_Wolf_Walk(this);
+	//State登録(BeastMan_Wolfの移動)
+	m_stateList[EnemyState::eState_Walk].reset(new BeastMan_Wolf_Walk(this));
 }
 
 BeastMan_Wolf::~BeastMan_Wolf(){
+	//ターゲットにしているタワーがいたら、ターゲットフラグをfalseに設定
+	if (mp_targetTower) {
+		mp_targetTower->SetIsTarget(false);
+	}
 }
 
 void BeastMan_Wolf::Update(){
-	//ターゲットのタワーが存在しているかつ、ターゲットにしているタワーが倒壊状態かつ、自身のアニメーションが終了していたら
-	//攻撃アニメーションをループにしているため、このifは通らない
-	//応急処置として、タワーが壊れればすぐに移動状態になるが、応急処置なので後で直す
-	if (mp_targetTower && mp_targetTower->GetState() == TowerBase::TowerState::eState_Broken/* && m_model.isAnimationEnd()*/) {
-		//ターゲットにするタワーのポインタをnullptrに設定し、移動状態に移行
+	//ターゲットのタワーが存在しているかつ、ターゲットにしているタワーが倒壊状態なら
+	if (mp_targetTower && mp_targetTower->GetState() == TowerBase::TowerState::eState_Broken) {
+		//ターゲットにするタワーのポインタと攻撃のポインタをnullptrに設定し、移動状態に移行
 		mp_targetTower = nullptr;
+		SetEnemyAttack(nullptr);
 		ChangeState(GetOldEnemyState());
 	}
 	//ターゲットにできるタワーがあるか探索
@@ -39,8 +41,10 @@ void BeastMan_Wolf::Update(){
 }
 
 void BeastMan_Wolf::SearchTower(){
+	//既にターゲットにしているタワーがいるなら、以降の処理を行わない
+	if (mp_targetTower) return;
 	//全てのタワーを取得
-	auto list = TaskManager::FindObjects(eTower);
+	auto list = TaskManager::GetInstance()->FindObjects(eTower);
 	//リストの中身がない場合、以降の処理を行わない
 	if(list.empty()) return;
 	//設定するタワーのポインタ
@@ -52,8 +56,8 @@ void BeastMan_Wolf::SearchTower(){
 	//タワーのリストを探索
 	for (auto& t : list) {
 		TowerBase* currentTower = static_cast<TowerBase*>(t);
-		//タワーが建造完了後状態なら
-		if (currentTower->GetState() == TowerBase::TowerState::eState_BuildAfter) {
+		//タワーが建造完了後状態かつ、誰にもターゲットにされていないなら
+		if (currentTower->GetState() == TowerBase::TowerState::eState_BuildAfter && !currentTower->GetIsTarget()) {
 			//自身からタワーへのベクトル
 			CVector3D vec = currentTower->GetPos() - m_pos;
 			//タワーへの距離が射程範囲内かつ、他の見つけたタワーよりも近ければ(最初に見つけたタワーは必ず通る)
@@ -68,4 +72,8 @@ void BeastMan_Wolf::SearchTower(){
 	}
 	//ターゲットにするタワーを設定
 	mp_targetTower = closestTower;
+	//ターゲットにするタワーが見つかっていたら、ターゲットフラグをtrueに設定
+	if (mp_targetTower) {
+		mp_targetTower->SetIsTarget(true);
+	}
 }

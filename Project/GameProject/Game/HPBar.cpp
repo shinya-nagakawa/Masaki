@@ -4,7 +4,7 @@ HPBar::HPBar(float Scale)
 	: m_img(COPY_RESOURCE("HPBar", CImage))
 	, m_type(Type::eMax)
 	, m_pos(CVector3D::zero)
-	, m_par(0)
+	, m_par(0.0f)
 	, m_bar_scale(Scale)
 	, m_alpha(1.0f)
 	, m_visibility(true){
@@ -24,9 +24,9 @@ void HPBar::Draw() {
 	}
 	gauge_data[(unsigned int)Type::eMax] = {
 		{CRect(84.0f,578.0f,1483.0f,826.0f),CRect(111.0f,857.0f,1452.0f,1044.0f),CVector2D(29.0f,31.0f)},
-		{CRect(99,1098,1469,1284),CRect(120,1353,1448,1502),CVector2D(22,19)},
-		{CRect(99,1098,1469,1284),CRect(120,1353,1448,1502),CVector2D(22,19)},
-		{CRect(99,1098,1469,1284),CRect(120,1353,1448,1502),CVector2D(22,19)},
+		{CRect(99.0f,1098.0f,1469.0f,1284.0f),CRect(120.0f,1353.0f,1448.0f,1502.0f),CVector2D(22.0f,19.0f)},
+		{CRect(99.0f,1098.0f,1469.0f,1284.0f),CRect(120.0f,1353.0f,1448.0f,1502.0f),CVector2D(22.0f,19.0f)},
+		{CRect(99.0f,1098.0f,1469.0f,1284.0f),CRect(120.0f,1353.0f,1448.0f,1502.0f),CVector2D(22.0f,19.0f)},
 	};
 	SGaugeData* d = &gauge_data[(unsigned int)m_type];
 	//˜g‚Ì•\Ž¦
@@ -34,10 +34,11 @@ void HPBar::Draw() {
 	m_img.SetSize(d->frame_rect.m_width * m_bar_scale, d->frame_rect.m_height * m_bar_scale);
 	m_img.SetPos(CVector2D(m_pos.x, m_pos.y));
 	m_img.SetColor(m_img.m_color.r, m_img.m_color.g, m_img.m_color.b, m_alpha);
+	m_img.SetCenter(m_img.m_size.x / 2.0f, 0.0f);
 	m_img.Draw();
 
 	//ƒQ[ƒW‚Ì•\Ž¦
-	m_img.SetRect(d->bar_rect.m_left, d->bar_rect.m_top, d->bar_rect.m_right - d->bar_rect.m_width * (1.0 - m_par), d->bar_rect.m_bottom);
+	m_img.SetRect(d->bar_rect.m_left, d->bar_rect.m_top, d->bar_rect.m_right - d->bar_rect.m_width * (1.0f - m_par), d->bar_rect.m_bottom);
 	m_img.SetSize(d->bar_rect.m_width * m_bar_scale * m_par, d->bar_rect.m_height * m_bar_scale);
 	m_img.SetPos(CVector2D(m_pos.x, m_pos.y) + d->bar_pos * m_bar_scale);
 	m_img.SetColor(m_img.m_color.r, m_img.m_color.g, m_img.m_color.b, m_alpha);
@@ -60,14 +61,14 @@ void HPBar::SetValue(float par){
 	m_par = par;
 }
 
-void HPBar::ChangeTransparent(float speed){
-	m_alpha -= speed;
-}
-
 void HPBar::InitializeAlpha(){
 	m_alpha = 1.0f;
 }
 
-float HPBar::GetAlpha(){
+float HPBar::GetAlpha() const{
 	return m_alpha;
+}
+
+void HPBar::SetAlpha(float alpha){
+	m_alpha = alpha;
 }

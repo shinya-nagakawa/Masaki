@@ -8,7 +8,7 @@ Vampire::Vampire(const CVector3D& pos, const int level, Kinds kinds, EnemyBase* 
 	m_scale = CVector3D(0.017f, 0.017f, 0.017f);
 	m_rad = 0.6f;
 	m_height = 1.8f;
-	m_bar_pos = CVector3D(2.5f, 1.8f * 0.1f, -0.8f);
+	m_bar_pos = CVector3D(0.0f, 1.8f * 0.1f, -0.8f);
 	m_attacktiming = 33;
 	mp_leader = leader;
 	//ステータスを設定
@@ -17,7 +17,7 @@ Vampire::Vampire(const CVector3D& pos, const int level, Kinds kinds, EnemyBase* 
 	//煙のようなエフェクトを生成
 	new MagicEffect("Smoke", m_pos, CVector3D(DtoR(90.0f), 0.0f, 0.0f), 10.0f, 150.0f);
 	//State登録(Vampireの特殊行動)
-	m_stateList[(int)EnemyState::eState_Special] = new Vampire_Special(this);
+	m_stateList[EnemyState::eState_Special].reset(new Vampire_Special(this));
 }
 
 Vampire::~Vampire() {

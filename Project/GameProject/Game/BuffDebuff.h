@@ -3,13 +3,6 @@
 /*バフ/デバフ バフ/デバフを与えることができるキャラが所持*/
 
 class BuffDebuff{
-private:
-	int m_buffdebufftype; //タイプ
-	int m_effect;         //効果種類
-	float m_time;         //効果時間
-	float m_size;         //効果量
-	bool m_buffordebuff;  //バフかデバフか
-
 public:
 	/// <summary>
 	/// コンストラクタ
@@ -30,36 +23,44 @@ public:
 	/// <param name="BuffOrDebuff">バフかデバフか</param>
 	void SetBuffDebuff(int Type, int Effect, float Time, float Size, bool BuffOrDebuff);
 	/// <summary>
-	/// バフ/デバフのタイプ返却
+	/// バフ/デバフのタイプを取得
 	/// </summary>
 	/// <returns>タイプ</returns>
-	const int GetBuffDebuffType() const;
+	int GetBuffDebuffType() const;
 	/// <summary>
-	/// 効果種類を返却
+	/// 効果種類を取得
 	/// </summary>
 	/// <returns>効果種類</returns>
-	const int GetEffect() const;
+	int GetEffect() const;
 	/// <summary>
-	/// 効果量を返却
+	/// 効果量を取得
 	/// </summary>
 	/// <returns>効果量</returns>
-	const float GetSize() const;
+	float GetSize() const;
 	/// <summary>
-	/// 効果量を設定
+	/// 効果量を取得
 	/// </summary>
 	void SetBuffDebuffSize(float Size);
 	/// <summary>
-	/// バフかデバフかを返却
+	/// バフかデバフかを取得
 	/// </summary>
 	/// <returns>バフかデバフか</returns>
-	const bool GetBufforDebuff() const;
+	bool GetBufforDebuff() const;
+
 	/// <summary>
 	/// 効果時間からデルタタイムを減算
 	/// </summary>
 	void SubtractionTime();
 	/// <summary>
-	/// 効果時間が終了しているか返却
+	/// 効果時間が終了しているか取得
 	/// </summary>
 	/// <returns></returns>
-	const bool IsTimeOver() const;
+	bool IsTimeOver() const;
+
+private:
+	int m_buffdebufftype; //タイプ
+	int m_effect;         //効果種類
+	float m_time;         //効果時間
+	float m_size;         //効果量
+	bool m_buffordebuff;  //バフかデバフか
 };

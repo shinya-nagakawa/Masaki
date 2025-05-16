@@ -40,9 +40,7 @@ class CVideoTextrue : public CTexture {
     uint8_t* m_swr_buf = 0;
     int m_swr_buf_len = 0;
     float m_time;
-    float m_duration;
     float m_speed_scale;
-    bool m_loop;
     std::string m_file_name;
     CSoundBase* m_sound;
     VideoReaderState m_state;
@@ -57,9 +55,9 @@ public:
     void RenderFrame();
     void MapTexture();
     void Release();
-    void Play(bool loop);
+    void Play();
     void Stop();
-    bool isEnd();
+
     friend class CVideo;
 };
 
@@ -68,11 +66,8 @@ class CVideo : private CImage {
 public:
     CVideo(const char* filename);
     void Draw();
-    void Play(bool lopp = true);
+    void Play();
     void Stop();
-    bool isEnd() {
-        return mp_video_texture->isEnd();
-    }
     bool isPlay() {
         return mp_video_texture->m_speed_scale == 0 ? false : true;
     }
@@ -86,3 +81,4 @@ public:
         CImage::SetPos(pos);
     }
 };
+

@@ -17,9 +17,6 @@
     <ClInclude Include="Game\Effect.h">
       <Filter>Game</Filter>
     </ClInclude>
-    <ClInclude Include="Game\Obstacle.h">
-      <Filter>Game</Filter>
-    </ClInclude>
     <ClInclude Include="Game\RouteNode.h">
       <Filter>Game</Filter>
     </ClInclude>
@@ -128,9 +125,6 @@
     <ClInclude Include="Game\Player_sword.h">
       <Filter>Game\Player</Filter>
     </ClInclude>
-    <ClInclude Include="Game\PlayerAttack.h">
-      <Filter>Game\Player</Filter>
-    </ClInclude>
     <ClInclude Include="Game\ElementTowerAttack.h">
       <Filter>Game\Tower</Filter>
     </ClInclude>
@@ -176,6 +170,21 @@
     <ClInclude Include="Game\Menu.h">
       <Filter>Game</Filter>
     </ClInclude>
+    <ClInclude Include="Game\Tutorial.h">
+      <Filter>Game</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Cursor.h">
+      <Filter>Game\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Sea.h">
+      <Filter>Game</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\PlayerMode.h">
+      <Filter>Game\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Select.h">
+      <Filter>Game</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
@@ -192,9 +201,6 @@
       <Filter>Game</Filter>
     </ClCompile>
     <ClCompile Include="Game\Effect.cpp">
-      <Filter>Game</Filter>
-    </ClCompile>
-    <ClCompile Include="Game\Obstacle.cpp">
       <Filter>Game</Filter>
     </ClCompile>
     <ClCompile Include="Game\RouteNode.cpp">
@@ -308,16 +314,10 @@
     <ClCompile Include="Game\EnemyManager.cpp">
       <Filter>Game\Enemy</Filter>
     </ClCompile>
-    <ClCompile Include="Game\Player.cpp">
-      <Filter>Game\Player</Filter>
-    </ClCompile>
     <ClCompile Include="Game\Player_shield.cpp">
       <Filter>Game\Player</Filter>
     </ClCompile>
     <ClCompile Include="Game\Player_sword.cpp">
-      <Filter>Game\Player</Filter>
-    </ClCompile>
-    <ClCompile Include="Game\PlayerAttack.cpp">
       <Filter>Game\Player</Filter>
     </ClCompile>
     <ClCompile Include="Game\ElementTowerAttack.cpp">
@@ -387,6 +387,42 @@
       <Filter>Game</Filter>
     </ClCompile>
     <ClCompile Include="Game\Menu.cpp">
+      <Filter>Game</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Tutorial.cpp">
+      <Filter>Game</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Cursor.cpp">
+      <Filter>Game\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Sea.cpp">
+      <Filter>Game</Filter>
+    </ClCompile>
+    <ClCompile Include="Base\Player_TDState_Idle.cpp">
+      <Filter>Base\State</Filter>
+    </ClCompile>
+    <ClCompile Include="Base\Player_TDState_Build.cpp">
+      <Filter>Base\State</Filter>
+    </ClCompile>
+    <ClCompile Include="Base\Player_ACTState_Idle.cpp">
+      <Filter>Base\State</Filter>
+    </ClCompile>
+    <ClCompile Include="Base\Player_ACTState_Walk.cpp">
+      <Filter>Base\State</Filter>
+    </ClCompile>
+    <ClCompile Include="Base\Player_ACTState_Dash.cpp">
+      <Filter>Base\State</Filter>
+    </ClCompile>
+    <ClCompile Include="Base\Player_ACTState_Attack.cpp">
+      <Filter>Base\State</Filter>
+    </ClCompile>
+    <ClCompile Include="Base\Player_ACTState_Buff.cpp">
+      <Filter>Base\State</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Player.cpp">
+      <Filter>Game\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Select.cpp">
       <Filter>Game</Filter>
     </ClCompile>
   </ItemGroup>

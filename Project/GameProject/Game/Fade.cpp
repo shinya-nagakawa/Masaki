@@ -1,9 +1,10 @@
 #include "Fade.h"
 
 Fade::Fade(float speed)
-	: m_black(COPY_RESOURCE("Fade", CImage))
+	: m_img(nullptr)
+	, m_black(COPY_RESOURCE("Fade", CImage))
 	, m_alpha(1.0f)
-	, m_alpha_(1.0f)
+	, m_alphaImg(1.0f)
 	, m_speed(0.05f)
 	, m_state(FadeState::eNone){
 }
@@ -18,8 +19,8 @@ void Fade::Update(){
 	case Fade::FadeState::eFadeIn:
 		//透明度が0より大きい場合、透明度を減少
 		if (m_img) {
-			if (m_alpha_ > 0.0f) {
-				m_alpha_ -= m_speed;
+			if (m_alphaImg > 0.0f) {
+				m_alphaImg -= m_speed;
 			}
 		}
 		else {
@@ -32,8 +33,8 @@ void Fade::Update(){
 	case Fade::FadeState::eFadeOut:
 		//透明度が1より小さい場合、透明度を加算
 		if (m_img) {
-			if (m_alpha_ < 1.0f) {
-				m_alpha_ += m_speed;
+			if (m_alphaImg < 1.0f) {
+				m_alphaImg += m_speed;
 			}
 		}
 		else {
@@ -68,7 +69,7 @@ void Fade::Draw(){
 	//フェードしたい画像のポインタが設定されていたら
 	if (m_img) {
 		//画像の透明度を設定
-		m_img->SetColor(m_img->m_color.r, m_img->m_color.g, m_img->m_color.b, m_alpha_);
+		m_img->SetColor(m_img->m_color.r, m_img->m_color.g, m_img->m_color.b, m_alphaImg);
 	}
 }
 
@@ -78,7 +79,7 @@ void Fade::FadeIn(CImage* image){
 	m_state = FadeState::eFadeIn;
 	//フェードインしたい画像が渡されていたら設定
 	if (image) {
-		m_alpha_ = 1.0f;
+		m_alphaImg = 1.0f;
 		m_img = image;
 	}
 	else {
@@ -93,7 +94,7 @@ void Fade::FadeOut(CImage* image){
 	m_state = FadeState::eFadeOut;
 	//フェードアウトしたい画像が渡されていたら設定
 	if (image) {
-		m_alpha_ = 0.0f;
+		m_alphaImg = 0.0f;
 		m_img = image;
 	}
 	else {
@@ -150,5 +151,5 @@ Fade::FadeState Fade::GetState() const{
 }
 
 float Fade::GetAlpha() const{
-	return m_alpha_;
+	return m_alphaImg;
 }

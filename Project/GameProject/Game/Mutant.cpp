@@ -8,7 +8,7 @@ Mutant::Mutant(const CVector3D& pos, const int level, Kinds kinds, EnemyBase* le
 	m_scale = CVector3D(0.04f, 0.04f, 0.04f);
 	m_rad = 0.8f;
 	m_height = 2.2f;
-	m_bar_pos = CVector3D(2.5f, 1.8f * 0.1f, -1.5f);
+	m_bar_pos = CVector3D(0.0f, 1.8f * 0.1f, -1.5f);
 	m_attacktiming = 39;
 	mp_leader = leader;
 	//ステータスを設定
@@ -19,7 +19,7 @@ Mutant::Mutant(const CVector3D& pos, const int level, Kinds kinds, EnemyBase* le
 	//煙のようなエフェクトを生成
 	new MagicEffect("Smoke", m_pos, CVector3D(DtoR(90.0f), 0.0f, 0.0f), 10.0f, 150.0f);
 	//State登録(Mutantの特殊行動)
-	m_stateList[(int)EnemyState::eState_Special] = new Mutant_Special(this);
+	m_stateList[EnemyState::eState_Special].reset(new Mutant_Special(this));
 }
 
 Mutant::~Mutant() {

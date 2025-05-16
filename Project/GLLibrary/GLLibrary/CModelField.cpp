@@ -477,7 +477,7 @@ bool CModelField::Load(const char *path){
 	for (unsigned int i = 0; i < m_header.materialCnt; i++) {
 		SFieldMaterial	*m = &material[i];
 		CMaterial *mat = &m_pMaterial[i];
-		mat->m_shader_name = "StaticMesh";
+		mat->mp_shader = CShader::GetInstance("StaticMesh");
 
 		strcpy_s(mat->m_name, 128, m->m_name);
 		mat->m_alpha = 1.0f;
@@ -721,11 +721,10 @@ void CModelField::Render(CMatrix &m){
 	*/
 
 	for (int i = 0; i < m_materialCnt; i++) {
-		CShader* s = m_pMaterial[i].mp_shader = CShader::GetInstance(m_pMaterial[i].m_shader_name);
-		s->Enable();
-		glUniform1f(glGetUniformLocation(s->GetProgram(), "shadow_bias"), m_shadow_bias);
-		glUniform1i(glGetUniformLocation(s->GetProgram(), "toon"), m_toon ? 1 : 0);
-		CModel::SendShaderParam(s,m, CCamera::GetCurrent()->GetViewMatrix() * m, CCamera::GetCurrent()->GetProjectionMatrix());
+		m_pMaterial[i].mp_shader->Enable();
+		glUniform1f(glGetUniformLocation(m_pMaterial[i].mp_shader->GetProgram(), "shadow_bias"), m_shadow_bias);
+		glUniform1i(glGetUniformLocation(m_pMaterial[i].mp_shader->GetProgram(), "toon"), m_toon ? 1 : 0);
+		CModel::SendShaderParam(m_pMaterial[i].mp_shader,m, CCamera::GetCurrent()->GetViewMatrix() * m, CCamera::GetCurrent()->GetProjectionMatrix());
 
 		m_pMaterial[i].Map();
 		for (int x = m_minX; x <= m_maxX; x++){
@@ -734,12 +733,12 @@ void CModelField::Render(CMatrix &m){
 				CVector3D min = GetVertexN(dir, CVector3D(x*m_header.cutLength, 0, z*m_header.cutLength), CVector3D((x + 1)*m_header.cutLength, 1000, (z + 1)*m_header.cutLength));
 				if(boxInFrustum(c,dir,min,max)) {
 					int idx = GetIdx(x, z);
-					m_pMesh[idx].Render(s, i);
+					m_pMesh[idx].Render(m_pMaterial[i].mp_shader, i);
 				}
 			}
 		}
 		m_pMaterial[i].Unmap();
-		s->Disable();
+		m_pMaterial[i].mp_shader->Disable();
 	}
 
 	m_mutex.unlock();

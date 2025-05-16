@@ -2,10 +2,8 @@
 
 #include "GL.h"
 #include "CVector.h"
-#include <AL/al.h>
-#include <AL/alc.h>
-#include <AL/efx.h>
-#include <AL/efx-presets.h>
+#include "AL/alc.h"
+#include "AL/al.h"
 #include <map>
 #include <string>
 class CCamera;
@@ -32,8 +30,6 @@ public:
 	ALuint *m_source;
 	ALuint m_buffer;
 	ALuint m_current;
-	ALuint *m_effect;
-	ALuint *m_effectSlot;
 	int m_layer_max;
 	int m_channels;
 	int m_sample_rate;
@@ -50,14 +46,12 @@ public:
 	bool Load(const char *path, int layer=1,bool is3D=false);
 
 	bool Create(const void* data, ALsizei size, ALenum  format, ALsizei freq);
-
 	/*!
 	@brief	サウンド再生
 	@param	boLoop	[in]	ループフラグ
-	@param	effect	[in]	リバーブエフェクトON
 	@return	ハンドルID
 	**/
-	int Play(bool boLoop=false,bool effect=false, const EFXEAXREVERBPROPERTIES& reverb= EFX_REVERB_PRESET_GENERIC);
+	int Play(bool boLoop=false);
 	/*!
 	@brief	サウンド再開
 	@param	boLoop	[in]	ループフラグ
@@ -70,9 +64,8 @@ public:
 	@param	pos			[in]	発生座標	
 	@param	velocity	[in]	速度
 	@param	boLoop		[in]	ループフラグ
-	@param	effect	[in]	リバーブエフェクトON
 	**/
-	int Play3D(const CVector3D& pos,const CVector3D& velocity, bool boLoop = false, bool effect = false, const EFXEAXREVERBPROPERTIES& reverb = EFX_REVERB_PRESET_GENERIC);
+	int Play3D(const CVector3D& pos,const CVector3D& velocity, bool boLoop = false);
 	/*!
 	@brief	サウンド座標再設定
 	@param	pos			[in]	発生座標
@@ -136,8 +129,6 @@ public:
 };
 class CSound {
 	std::map<std::string, CSoundBase*> m_list;
-	ALCcontext* mp_context;
-	ALCdevice* mp_device;
 	static CSound *m_instance;
 	friend class CSoundBase;
 public:

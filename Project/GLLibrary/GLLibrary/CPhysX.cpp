@@ -3,124 +3,6 @@
 #include "CPhysX.h"
 #include "CMatrix.h"
 #include "CFPS.h"
-using namespace physx;
-
-class ContactReportCallback : public PxSimulationEventCallback
-{
-    std::list< CPhysXCollisionCore> m_on_collision_new;
-    std::list< CPhysXCollisionCore> m_trigger_new;
-
-    std::list< CPhysXCollisionCore> m_on_collision_enter;
-    std::list< CPhysXCollisionCore> m_on_collision_stay;
-    std::list< CPhysXCollisionCore> m_on_collision_exit;
-    std::list< CPhysXCollisionCore> m_trigger_enter;
-    std::list< CPhysXCollisionCore> m_trigger_stay;
-    std::list< CPhysXCollisionCore> m_trigger_exit;
-    void UpdateList(std::list< CPhysXCollisionCore>& out, std::list< CPhysXCollisionCore>& list1, std::list< CPhysXCollisionCore>& list2, bool flag) {
-        out.clear();
-        for (auto& v1 : list1) {
-            bool f = false;
-            for (auto& v2 : list2) {
-                if (v1.actor[0] == v2.actor[0] && v1.actor[1] == v2.actor[1]) {
-                    f = true;
-                }
-            }
-            if (f == flag)
-                out.push_back(v1);
-        }
-    }
-    void onConstraintBreak(PxConstraintInfo* constraints, PxU32 count) { PX_UNUSED(constraints); PX_UNUSED(count); }
-    void onWake(PxActor** actors, PxU32 count) { PX_UNUSED(actors); PX_UNUSED(count); }
-    void onSleep(PxActor** actors, PxU32 count) { PX_UNUSED(actors); PX_UNUSED(count); }
-    void onTrigger(PxTriggerPair* pairs, PxU32 count) {
-        PX_UNUSED(pairs);
-        PX_UNUSED(count);
-        for (PxU32 i = 0; i < count; i++)
-        {
-            CPhysXActor* act[2] = {
-                    (CPhysXActor*)pairs[0].otherActor->userData,
-                   (CPhysXActor*)pairs[0].triggerActor->userData
-            };
-            if (act[0] && act[1]) {
-                m_trigger_new.push_back({ act[0],act[1],{{act[1]},{act[0]}} });
-            }
-        }
-    }
-    void onAdvance(const PxRigidBody* const*, const PxTransform*, const PxU32) {}
-    void onContact(const PxContactPairHeader& pairHeader, const PxContactPair* pairs, PxU32 nbPairs)
-    {
-        PX_UNUSED((pairHeader));
-
-
-        CPhysXActor* act[2] = {
-            dynamic_cast<CPhysXActor*>((CPhysXActor*)pairHeader.actors[0]->userData),
-            dynamic_cast<CPhysXActor*>((CPhysXActor*)pairHeader.actors[1]->userData)
-        };
-        if (act[0] && act[1]) {
-            m_on_collision_new.push_back({ act[0],act[1],{{act[1]},{act[0]}} });
-        }
-
-    }
-public:
-    void PreviousProcess() {
-        m_on_collision_new.clear();
-        m_trigger_new.clear();
-    }
-    void FollowingProcess() {
-
-        UpdateList(m_on_collision_exit, m_on_collision_stay, m_on_collision_new, false);
-        UpdateList(m_on_collision_stay, m_on_collision_enter, m_on_collision_new, true);
-        UpdateList(m_trigger_exit, m_trigger_stay, m_trigger_new, false);
-        UpdateList(m_trigger_stay, m_trigger_enter, m_trigger_new, true);
-        m_on_collision_enter = m_on_collision_new;
-        m_trigger_enter = m_trigger_new;
-        for (auto& v : m_on_collision_enter) {
-            v.actor[0]->onCollisionEnter(v.data[0]);
-            v.actor[1]->onCollisionEnter(v.data[1]);
-        }
-        for (auto& v : m_on_collision_stay) {
-            v.actor[0]->onCollisionStay(v.data[0]);
-            v.actor[1]->onCollisionStay(v.data[1]);
-        }
-        for (auto& v : m_on_collision_exit) {
-            v.actor[0]->onCollisionExit(v.data[0]);
-            v.actor[1]->onCollisionExit(v.data[1]);
-        }
-        for (auto& v : m_trigger_enter) {
-            v.actor[0]->onTriggerEnter(v.data[0]);
-            v.actor[1]->onTriggerEnter(v.data[1]);
-        }
-        for (auto& v : m_trigger_stay) {
-            v.actor[0]->onTriggerStay(v.data[0]);
-            v.actor[1]->onTriggerStay(v.data[1]);
-        }
-        for (auto& v : m_trigger_exit) {
-            v.actor[0]->onTriggerExit(v.data[0]);
-            v.actor[1]->onTriggerExit(v.data[1]);
-        }
-    }
-};
-
-static PxFilterFlags contactReportFilterShader(PxFilterObjectAttributes attributes0, PxFilterData filterData0,
-    PxFilterObjectAttributes attributes1, PxFilterData filterData1,
-    PxPairFlags& pairFlags, const void* constantBlock, PxU32 constantBlockSize)
-{
-    PX_UNUSED(attributes0);
-    PX_UNUSED(attributes1);
-    PX_UNUSED(filterData0);
-    PX_UNUSED(filterData1);
-    PX_UNUSED(constantBlockSize);
-    PX_UNUSED(constantBlock);
-
-    // all initial and persisting reports for everything, with per-point data
-    pairFlags = PxPairFlag::eSOLVE_CONTACT | PxPairFlag::eDETECT_DISCRETE_CONTACT
-        | PxPairFlag::eNOTIFY_TOUCH_FOUND
-        | PxPairFlag::eNOTIFY_TOUCH_PERSISTS
-        | PxPairFlag::eNOTIFY_CONTACT_POINTS
-        | PxPairFlag::eMODIFY_CONTACTS;
-    return PxFilterFlag::eDEFAULT;
-}
-ContactReportCallback gContactReportCallback;
 
 CPhysX* CPhysX::mp_instance=nullptr;
 CPhysX::CPhysX()
@@ -164,10 +46,8 @@ bool CPhysX::Init()
     // 空間の設定
     physx::PxSceneDesc scene_desc(m_pPhysics->getTolerancesScale());
     scene_desc.gravity = physx::PxVec3(0, -9, 0);
-//    scene_desc.filterShader = physx::PxDefaultSimulationFilterShader;
-    scene_desc.filterShader = contactReportFilterShader;
+    scene_desc.filterShader = physx::PxDefaultSimulationFilterShader;
     scene_desc.cpuDispatcher = m_pDispatcher;
-    scene_desc.simulationEventCallback = &gContactReportCallback;
     // 空間のインスタンス化
     m_pScene = m_pPhysics->createScene(scene_desc);
     // PVDの表示設定
@@ -190,12 +70,10 @@ void CPhysX::ClearInstance() {
 }
 void CPhysX::Update()
 {
-    gContactReportCallback.PreviousProcess();
     // シミュレーション速度を指定する
     m_pScene->simulate(CFPS::GetDeltaTime());
     // PhysXの処理が終わるまで待つ
     m_pScene->fetchResults(true);
-    gContactReportCallback.FollowingProcess();
 }
 CPhysX* CPhysX::GetInstance()
 {

@@ -9,7 +9,7 @@ void EnemyBase::Die::Enter() {
 	mp_owner->m_model.ChangeAnimation(AnimNumber::AnimDie, false);
 
 	//プレイヤーを取得しキャスト
-	if (Task* t = TaskManager::FindObject(ePlayer)) {
+	if (Task* t = TaskManager::GetInstance()->FindObject(ePlayer)) {
 		Player* p = static_cast<Player*>(t);
 		//エネルギーを100追加
 		p->GetResource().AdditionResource(0, 100);
@@ -23,11 +23,11 @@ void EnemyBase::Die::Update() {
 		for (int i = 0; i < mp_owner->m_model.GetMaterialSize(); i++) {
 			CMaterial* m = mp_owner->m_model.GetMaterial(i);
 			m->m_alpha -= 0.05f;
-			/*エネルギー回収装置があれば、半透明で固定の処理を書く*/
+			mp_owner->GetHPBar().SetAlpha(m->m_alpha);
 			//透明になれば
 			if (m->m_alpha <= 0.0f) {
 				//削除
-				mp_owner->Kill();
+				mp_owner->SetKill();
 			}
 		}
 		//もし自身が攻撃座標を占領していたら

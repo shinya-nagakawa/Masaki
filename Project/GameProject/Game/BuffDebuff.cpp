@@ -19,15 +19,15 @@ void BuffDebuff::SetBuffDebuff(int Type, int Effect, float Time, float Size, boo
 	m_buffordebuff = BuffOrDebuff;
 }
 
-const int BuffDebuff::GetBuffDebuffType() const{
+int BuffDebuff::GetBuffDebuffType() const{
 	return m_buffdebufftype;
 }
 
-const int BuffDebuff::GetEffect() const{
+int BuffDebuff::GetEffect() const{
 	return m_effect;
 }
 
-const float BuffDebuff::GetSize() const{
+float BuffDebuff::GetSize() const{
 	return m_size;
 }
 
@@ -35,7 +35,7 @@ void BuffDebuff::SetBuffDebuffSize(float Size){
 	m_size = Size;
 }
 
-const bool BuffDebuff::GetBufforDebuff() const{
+bool BuffDebuff::GetBufforDebuff() const{
 	return m_buffordebuff;
 }
 
@@ -43,6 +43,6 @@ void BuffDebuff::SubtractionTime(){
 	m_time -= CFPS::GetDeltaTime();
 }
 
-const bool BuffDebuff::IsTimeOver() const{
+bool BuffDebuff::IsTimeOver() const{
 	return m_time <= 0.0f;
 }

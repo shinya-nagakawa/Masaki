@@ -18,7 +18,7 @@
     <ClCompile Include="GLLibrary\CImage.cpp" />
     <ClCompile Include="GLLibrary\CInput.cpp" />
     <ClCompile Include="GLLibrary\CLight.cpp" />
-    <ClCompile Include="GLLibrary\CMultiThread.cpp" />
+    <ClCompile Include="GLLibrary\CLoadThread.cpp" />
     <ClCompile Include="GLLibrary\CMatrix.cpp" />
     <ClCompile Include="GLLibrary\CModel.cpp" />
     <ClCompile Include="GLLibrary\CModelA3M.cpp" />
@@ -48,7 +48,7 @@
     <ClInclude Include="GLLibrary\CImage.h" />
     <ClInclude Include="GLLibrary\CInput.h" />
     <ClInclude Include="GLLibrary\CLight.h" />
-    <ClInclude Include="GLLibrary\CMultiThread.h" />
+    <ClInclude Include="GLLibrary\CLoadThread.h" />
     <ClInclude Include="GLLibrary\CMatrix.h" />
     <ClInclude Include="GLLibrary\CModel.h" />
     <ClInclude Include="GLLibrary\CModelA3M.h" />

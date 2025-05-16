@@ -6,14 +6,11 @@
 /*特殊行動で範囲ダメージと範囲バフ*/
 
 class Mutant : public EnemyBase {
-private:
-	BuffDebuff m_buff; //与えることのできるバフ
-
 public:
 	/// <summary>
 	/// コンストラクタ
 	/// </summary>
-	/// <param name="pos">生成位置</param>
+	/// <param name="pos">座標</param>
 	/// <param name= "level">レベル</param>
 	/// <param name="kinds">種類</param>
 	/// <param name="leader">リーダー</param>
@@ -22,14 +19,15 @@ public:
 	/// デストラクタ
 	/// </summary>
 	~Mutant();
+
 	/// <summary>
 	/// 更新処理
 	/// </summary>
 	void Update() override;
 	/// <summary>
-	/// 自分の与えることのできるバフを返却
+	/// ミュータントの与えることのできるバフを返却
 	/// </summary>
-	/// <returns></returns>
+	/// <returns>自身が与えることのできるバフ</returns>
 	BuffDebuff GetBuff() const;
 
 	class Mutant_Special : public State<EnemyBase*> {
@@ -42,4 +40,7 @@ public:
 		virtual void Update() override;
 		virtual void Exit() override;
 	};
+
+private:
+	BuffDebuff m_buff; //与えることのできるバフ
 };

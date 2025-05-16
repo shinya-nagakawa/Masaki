@@ -86,14 +86,6 @@ void CInput::SetMouseInside(bool f) {
 	m_mouse_inside = f;
 	UpdateClipCursor(true);
 }
-void CInput::ShowCursor(bool f)
-{
-	if (f) {
-		while (::ShowCursor(true) < 0);
-	} else {
-		while (::ShowCursor(false) >= 0);
-	}
-}
 CVector2D CInput::GetRStick(int no)
 {
 	DIJOYSTATE2* pd = GetPadData(no);

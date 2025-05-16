@@ -8,24 +8,7 @@ class RouteNode;
 class EnemyAttack;
 
 class EnemyBase : public CharaBase {
-protected:
-	CModelA3M m_model;           //モデルオブジェクト
-
-	RouteNode* mp_TargetNode;    //目標ノード
-	CVector3D m_targetPos;       //目標としている座標
-
-	EnemyBase* mp_leader;        //自身が付いていくリーダー
-	std::list<EnemyBase*> m_followerList; //フォロワーのリスト(リーダーのみ管理)
-
-	CVector3D m_attackPos;       //攻撃を行う座標
-	int m_attackPosNumber;       //自身が占領した座標の番号
-
-	EnemyAttack* mp_EnemyAttack; //自身の攻撃のポインター
-
-	CVector3D m_knockbackPower;  //押し出される力
-	
-	bool m_IsCanTarget;          //ターゲットにできるかどうか
-	
+public:
 	//敵の状態
 	enum class EnemyState {
 		eState_Idle,    //待機
@@ -35,18 +18,14 @@ protected:
 		eState_Die,     //死亡
 		eState_Special, //特殊行動
 	};
-	EnemyState m_state;    //現在の状態
-	EnemyState m_oldState; //現在の状態から1つ前の状態
-	std::map<int, State<EnemyBase*>*> m_stateList; //各状態のリスト
 
-	//敵のアニメーション番号
-	enum AnimNumber {
-		AnimIdle,    //待機状態のアニメーション
-		AnimWalk,    //移動状態のアニメーション
-		AnimAttack,  //攻撃状態のアニメーション
-		AnimHit,     //被弾状態のアニメーション
-		AnimDie,     //死亡状態のアニメーション
-		AnimSpecial, //特殊行動状態のアニメーション
+	//敵の種類
+	enum class Kinds {
+		Goblin,        //ゴブリン(雑魚敵)
+		Mutant,        //ミュータント(重量級)
+		Vampire,       //ヴァンパイア(高速)
+		BeastMan_Wolf, //獣人(狼)(タワーを狙う)
+		BeastMan_Deer, //獣人(鹿)(回復)未実装
 	};
 
 	/// <summary>
@@ -62,39 +41,22 @@ protected:
 	/// </summary>
 	void Collision(Task* t) override;
 	/// <summary>
-	/// 状態切り替え
-	/// </summary>
-	/// <param name="state">切り替える状態</param>
-	void ChangeState(EnemyState state);
-
-public:
-	//敵の種類(名称は決まり次第変更)
-	enum class Kinds {
-		Goblin,        //ゴブリン(雑魚敵)
-		Mutant,        //ミュータント(重量級)
-		Vampire,       //ヴァンパイア(高速)
-		BeastMan_Wolf, //獣人(狼)(タワーを狙う)
-		BeastMan_Deer, //獣人(鹿)(自己強化? 回復?)
-	};
-	Kinds m_kinds;     //敵の種類
-
-	/// <summary>
-	/// コンストラクタ
-	/// </summary>
-	/// <param name="kinds">種類</param>
-	EnemyBase(Kinds kinds);
-	/// <summary>
-	/// デストラクタ
-	/// </summary>
-	~EnemyBase();
-
-	/// <summary>
-	/// モデル返却
+	/// モデルを取得
 	/// </summary>
 	/// <returns>自身のモデル</returns>
 	CModel* GetModel() override {
 		return &m_model;
 	}
+
+	CModelA3M* GetModelA3M() {
+		return &m_model;
+	}
+
+	/// <summary>
+	/// チュートリアル時専用の状態切り替え
+	/// </summary>
+	/// <param name="state">切り替える状態</param>
+	void ChangeStateInTutorial(EnemyState state);
 
 	/// <summary>
 	/// ターゲットノードのポインタを取得
@@ -166,17 +128,18 @@ public:
 	/// <summary>
 	/// 敵の攻撃のポインタに攻撃を生成
 	/// </summary>
-	/// <param name="">生成する攻撃</param>
+	/// <param name="attack">生成する攻撃</param>
 	void SetEnemyAttack(EnemyAttack* attack);
 
 	/// <summary>
 	/// 押し出される力を取得
 	/// </summary>
+	/// <returns>押し出される力</returns>
 	const CVector3D& GetKnockbackPower() const;
 	/// <summary>
 	/// 押し出される力を設定
 	/// </summary>
-	/// <param name="power">力</param>
+	/// <param name="power">押し出される力</param>
 	void SetKnockbackPower(const CVector3D& power);
 
 	/// <summary>
@@ -204,7 +167,6 @@ public:
 	/// 特殊状態への移行を管理
 	/// </summary>
 	void ControlSpecial();
-	
 
 	//それぞれの汎用的な状態を宣言(定義は別cppファイル)
 	//通常状態
@@ -251,4 +213,55 @@ public:
 		virtual void Update() override;
 		virtual void Exit() override;
 	};
+
+protected:
+	CModelA3M m_model;           //モデルオブジェクト
+
+	RouteNode* mp_TargetNode;    //目標ノード
+	CVector3D m_targetPos;       //目標としている座標
+
+	EnemyBase* mp_leader;        //自身が付いていくリーダー
+	std::list<EnemyBase*> m_followerList; //フォロワーのリスト(リーダーのみ管理)
+
+	CVector3D m_attackPos;       //攻撃を行う座標
+	int m_attackPosNumber;       //自身が占領した座標の番号
+
+	EnemyAttack* mp_EnemyAttack; //自身の攻撃のポインター
+
+	CVector3D m_knockbackPower;  //押し出される力
+	
+	bool m_IsCanTarget;          //ターゲットにできるかどうか
+	bool m_isAttackEnd;          //攻撃が終了したか(攻撃アニメーションの終わり)
+	
+	EnemyState m_state;    //現在の状態
+	EnemyState m_oldState; //現在の状態から1つ前の状態
+	std::map<EnemyState, std::unique_ptr<State<EnemyBase*>>> m_stateList; //各状態のリスト
+
+	Kinds m_kinds;     //敵の種類
+
+	//敵のアニメーション番号
+	enum AnimNumber {
+		AnimIdle,    //待機状態のアニメーション
+		AnimWalk,    //移動状態のアニメーション
+		AnimAttack,  //攻撃状態のアニメーション
+		AnimHit,     //被弾状態のアニメーション
+		AnimDie,     //死亡状態のアニメーション
+		AnimSpecial, //特殊行動状態のアニメーション
+	};
+
+	/// <summary>
+	/// コンストラクタ
+	/// </summary>
+	/// <param name="kinds">種類</param>
+	EnemyBase(Kinds kinds);
+	/// <summary>
+	/// デストラクタ
+	/// </summary>
+	~EnemyBase();
+
+	/// <summary>
+	/// 状態切り替え
+	/// </summary>
+	/// <param name="state">切り替える状態</param>
+	void ChangeState(EnemyState state);
 };

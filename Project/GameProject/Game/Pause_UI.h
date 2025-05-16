@@ -12,9 +12,6 @@
 #include "imgui/imgui_ja_gryph_ranges.h"
 
 class Pause_UI : public ObjectBase {
-private:
-	UIBase* mp_UIFrame; //UIフレームのポインタ
-
 public:
 	/// <summary>
 	/// コンストラクタ
@@ -24,8 +21,12 @@ public:
 	/// デストラクタ
 	/// </summary>
 	~Pause_UI();
+
 	/// <summary>
 	/// 描画処理
 	/// </summary>
 	void Draw() override;
+
+private:
+	UIBase* mp_UIFrame; //UIフレームのポインタ
 };

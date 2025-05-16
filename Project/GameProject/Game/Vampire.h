@@ -1,22 +1,14 @@
 #pragma once
 #include "../Base/EnemyBase.h"
 
-/*移動中のみ特殊行動でステルス状態になり、ターゲット不可*/
+/*移動中のみ特殊行動でステルス状態になりターゲット不可*/
 
 class Vampire : public EnemyBase {
-private:
-	float m_specialDuration; //ステルス状態の継続時間
-
-	/// <summary>
-	/// ステルス状態の管理
-	/// </summary>
-	void ControlStealth();
-
 public:
 	/// <summary>
 	/// コンストラクタ
 	/// </summary>
-	/// <param name="pos">生成位置</param>
+	/// <param name="pos">座標</param>
 	/// <param name= "level">レベル</param>
 	/// <param name="kinds">種類</param>
 	/// <param name="leader">リーダー</param>
@@ -25,14 +17,16 @@ public:
 	/// デストラクタ
 	/// </summary>
 	~Vampire();
+
 	/// <summary>
 	/// 更新処理
 	/// </summary>
 	void Update() override;
+
 	/// <summary>
 	/// 特殊効果の効果時間を設定
 	/// </summary>
-	/// <param name=""></param>
+	/// <param name="DurationTime">効果時間</param>
 	void SetSpecialDuration(float DurationTime);
 
 	class Vampire_Special : public State<EnemyBase*> {
@@ -45,4 +39,12 @@ public:
 		virtual void Update() override;
 		virtual void Exit() override;
 	};
+
+private:
+	float m_specialDuration; //ステルス状態の継続時間
+
+	/// <summary>
+	/// ステルス状態の管理
+	/// </summary>
+	void ControlStealth();
 };

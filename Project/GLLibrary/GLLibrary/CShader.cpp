@@ -1,4 +1,5 @@
-
+#include <stdio.h>
+#include <stdlib.h>
 #include "CShader.h"
 #include "CLight.h"
 #include "CRendaring.h"
@@ -25,7 +26,7 @@ const char* mesh_vert= "#version 430\n\n"\
 "out vec3 B;//従法線ベクトル\n"\
 "out vec4 vShadowCoord[SHADOW_MAX];    //!< シャドウデプスマップの参照用座標\n"\
 "uniform int usenormalMap;\n"\
-"uniform int depth_tex_size;\n"\
+"uniform int depth_tex_size;"\
 "void main(void)\n"\
 "{\n"\
 "	V = WorldMatrix * vec4(Vertex, 1);\n"\
@@ -66,7 +67,7 @@ const char *skin_mesh_vert = "#version 430\n\n"\
 "out vec2 texCoord;\n"\
 "out vec4 vShadowCoord[SHADOW_MAX];    //!< シャドウデプスマップの参照用座標\n"\
 "uniform int usenormalMap;\n"\
-"uniform int depth_tex_size;\n"\
+"uniform int depth_tex_size;"\
 "void main(void)\n"\
 "{\n"\
 "	mat4 comb = mat4(0);\n"\
@@ -116,11 +117,11 @@ const char* mesh_frag = "#version 430\n\n"\
 "uniform float alpha;\n"\
 "uniform int lighting;\n"\
 "uniform int uSetex;\n"\
-"uniform int usenormalMap;\n"\
+"uniform int usenormalMap;"\
 "uniform vec4 fogColor;\n"\
 "uniform float fogNear;\n"\
 "uniform float fogFar;\n"\
-"uniform int depth_tex_size;\n"\
+"uniform int depth_tex_size;"\
 "in vec4 vShadowCoord[SHADOW_MAX];    //!< シャドウデプスマップの参照用座標\n"\
 "uniform sampler2D depth_tex[SHADOW_MAX];    //!< デプス値テクスチャ\n"\
 "uniform float shadow_ambient;    //!< 影の濃さ\n"\
@@ -235,11 +236,11 @@ const char* mesh_frag_f = "#version 430\n\n"\
 "uniform float alpha;\n"\
 "uniform int lighting;\n"\
 "uniform int uSetex;\n"\
-"uniform int usenormalMap;\n"\
+"uniform int usenormalMap;"\
 "uniform vec4 fogColor;\n"\
 "uniform float fogNear;\n"\
 "uniform float fogFar;\n"\
-"uniform int depth_tex_size;\n"\
+"uniform int depth_tex_size;"\
 "in vec4 vShadowCoord[SHADOW_MAX];    //!< シャドウデプスマップの参照用座標\n"\
 "uniform sampler2D depth_tex[SHADOW_MAX];    //!< デプス値テクスチャ\n"\
 "uniform float shadow_ambient;    //!< 影の濃さ\n"\
@@ -320,21 +321,18 @@ const char* mesh_frag_f = "#version 430\n\n"\
 "			vec3 R = reflect(-E, Normal);\n"\
 "			S += pow(max(0, dot(R, L)), Pow) * p;\n"\
 "			D += (lightDiffuseColor[i] * clamp(NL, 0.0, 1.0) + lightAmbientColor[i]) * p;\n"\
-"			if(i==0){\n"\
-"				for(int i=0;i<depth_tex_size;i++) {\n"\
-"					vec3 coord = vShadowCoord[i].xyz / vShadowCoord[i].w;\n"\
-"					if(coord.z<1.0)\n"\
-"						for(int k=-1;k<=1;k++)\n"\
-"							for(int j=-1;j<=1;j++)\n"\
-"								if ( shadowmap(i,vec3(coord.xy + vec2(k,j)*d_tex_scale[i],coord.z)))\n"\
-"									visibility -= shadow_ambient/9;\n"\
-"				}\n"\
-"			D=min(D,visibility);\n"\
-"			}\n"\
+"		}\n"\
+"		for(int i=0;i<depth_tex_size;i++) {\n"\
+"			vec3 coord = vShadowCoord[i].xyz / vShadowCoord[i].w;\n"\
+"			if(coord.z<1.0)\n"\
+"				for(int k=-1;k<=1;k++)\n"\
+"					for(int j=-1;j<=1;j++)\n"\
+"						if ( shadowmap(i,vec3(coord.xy + vec2(k,j)*d_tex_scale[i],coord.z)))\n"\
+"							visibility -= shadow_ambient/9;\n"\
 "		}\n"\
 "		float l = length(eyePos - V.xyz);\n"\
 "		float f = clamp((fogFar - l) / (fogFar - fogNear), 0.0, 1.0);\n"\
-"		color = texColor.xyz * Diffuse.xyz * D /*+ visibility * Specular * clamp(S, 0.0, 1.0) + Emissive*/;\n"\
+"		color = texColor.xyz * Diffuse.xyz * min(D,visibility) /*+ visibility * Specular * clamp(S, 0.0, 1.0) + Emissive*/;\n"\
 "		out_color[0] = vec4(color + fogColor.xyz * (1.0 - f), clamp((texColor.w * Diffuse.w * alpha) - ((1.0 - fogColor.w) * (1.0 - f)), 0.0f, 1.0f));\n"\
 "		out_color[1] = vec4(visibility * Specular * clamp(S, 0.0, 1.0)+ Emissive,1);\n"\
 "	}\n"\
@@ -358,7 +356,7 @@ const char* mesh_frag_d = "#version 430\n\n"\
 "uniform float alpha;\n"\
 "uniform int lighting;\n"\
 "uniform int uSetex;\n"\
-"uniform int usenormalMap;\n"\
+"uniform int usenormalMap;"\
 "uniform vec4 fogColor;\n"\
 "uniform float fogNear;\n"\
 "uniform float fogFar;\n"\
@@ -370,7 +368,7 @@ const char* mesh_frag_d = "#version 430\n\n"\
 "in vec2 texCoord;\n"\
 "uniform sampler2D sampler;\n"\
 "uniform sampler2D normalMap;//法線マップ\n"\
-"uniform int depth_tex_size;\n"\
+"uniform int depth_tex_size;"\
 "in vec4 vShadowCoord[SHADOW_MAX];    //!< シャドウデプスマップの参照用座標\n"\
 "uniform sampler2D depth_tex[SHADOW_MAX];    //!< デプス値テクスチャ\n"\
 "uniform float shadow_ambient;    //!< 影の濃さ\n"\
@@ -809,111 +807,6 @@ const char* lighting_frag = "#version 430\n"\
 "	}\n"\
 "}\n";
 
-const char* water_flag = "#version 430\n"\
-"uniform sampler2D mirrorSampler;\n"\
-"uniform float alpha = 0.4;\n"\
-"uniform float time;\n"\
-"uniform float size = 0.1;\n"\
-"uniform float distortionScale = 1.0;\n"\
-"uniform sampler2D normalSampler;\n"\
-"uniform vec3 sunDirection = vec3(0, -0.7, 0.7);\n"\
-"uniform vec3 eyePos;\n"\
-"uniform vec3 waterColor = vec3(0.6, 0.6, 1.0);\n"\
-"uniform vec3 lightAmbientColor;\n"\
-"uniform vec3 lightDiffuseColor;\n"\
-"in vec4 V;\n"\
-"in vec3 N;\n"\
-"in vec3 T;\n"\
-"in vec3 B;\n"\
-"in vec2 texCoord;\n"\
-"//varying vec4 mirrorCoord;\n"\
-"out vec4 out_color;\n"\
-"vec4 getNoise(vec2 uv) {"\
-"	vec2 uv0 = (uv / 103.0) + vec2(time / 17.0, time / 29.0);\n"\
-"	vec2 uv1 = uv / 107.0 - vec2(time / -19.0, time / 31.0);\n"\
-"	vec2 uv2 = uv / vec2(8907.0, 9803.0) + vec2(time / 101.0, time / 97.0);\n"\
-"	vec2 uv3 = uv / vec2(1091.0, 1027.0) - vec2(time / 109.0, time / -113.0);\n"\
-"	vec4 noise = texture2D(normalSampler, uv0) +"\
-"		texture2D(normalSampler, uv1) +\n"\
-"		texture2D(normalSampler, uv2) +\n"\
-"		texture2D(normalSampler, uv3);\n"\
-"	return noise * 0.5 - 1.0;\n"\
-"}\n"\
-"void sunLight(const vec3 surfaceNormal, const vec3 eyeDirection, float shiny, float spec, float diffuse, inout vec3 diffuseColor, inout vec3 specularColor) {\n"\
-"	vec3 reflection = normalize(reflect(sunDirection, surfaceNormal));\n"\
-"	float direction = max(0.0, dot(eyeDirection, reflection));\n"\
-"	specularColor += pow(direction, shiny) * lightDiffuseColor * spec;\n"\
-"	diffuseColor += max(dot(sunDirection, surfaceNormal), 0.0) * lightDiffuseColor * diffuse;\n"\
-"}\n"\
-"void main() {\n"\
-"	vec4 noise = getNoise(V.xz * size);\n"\
-"	vec3 surfaceNormal = normalize(noise.xzy * vec3(1.5, 1.0, 1.5));\n"\
-"	vec3 diffuseLight = lightDiffuseColor;\n"\
-"	vec3 specularLight = vec3(0.0);\n"\
-"	vec3 worldToEye = eyePos - V.xyz;\n"\
-"	vec3 eyeDirection = normalize(worldToEye);\n"\
-"	sunLight(surfaceNormal, eyeDirection, 10.0, 0.4, 0.6, diffuseLight, specularLight);\n"\
-"	vec3 scatter = max(0.0, dot(surfaceNormal, eyeDirection)) * waterColor;\n"\
-"	//float s = getShadowMask();\n"\
-"	float s = 1.0f;\n"\
-"	vec3 albedo = ((scatter + lightAmbientColor * waterColor) * s);\n"\
-"	vec3 outgoingLight = albedo;\n"\
-"	out_color = vec4(outgoingLight + specularLight, alpha);\n"\
-"}";
-
-const char* water_flag_f = "#version 430\n"\
-"uniform sampler2D mirrorSampler;\n"\
-"uniform float alpha = 0.4;\n"\
-"uniform float time;\n"\
-"uniform float size = 0.1;\n"\
-"uniform float distortionScale = 1.0;\n"\
-"uniform sampler2D normalSampler;\n"\
-"uniform vec3 sunDirection = vec3(0, -0.7, 0.7);\n"\
-"uniform vec3 eyePos;\n"\
-"uniform vec3 waterColor = vec3(0.6, 0.6, 1.0);\n"\
-"uniform vec3 lightAmbientColor;\n"\
-"uniform vec3 lightDiffuseColor;\n"\
-"in vec4 V;\n"\
-"in vec3 N;\n"\
-"in vec3 T;\n"\
-"in vec3 B;\n"\
-"in vec2 texCoord;\n"\
-"//varying vec4 mirrorCoord;\n"\
-"out vec4 out_color[2];\n"\
-"vec4 getNoise(vec2 uv) {"\
-"	vec2 uv0 = (uv / 103.0) + vec2(time / 17.0, time / 29.0);\n"\
-"	vec2 uv1 = uv / 107.0 - vec2(time / -19.0, time / 31.0);\n"\
-"	vec2 uv2 = uv / vec2(8907.0, 9803.0) + vec2(time / 101.0, time / 97.0);\n"\
-"	vec2 uv3 = uv / vec2(1091.0, 1027.0) - vec2(time / 109.0, time / -113.0);\n"\
-"	vec4 noise = texture2D(normalSampler, uv0) +"\
-"		texture2D(normalSampler, uv1) +"\
-"		texture2D(normalSampler, uv2) +"\
-"		texture2D(normalSampler, uv3);\n"\
-"	return noise * 0.5 - 1.0;\n"\
-"}\n"\
-"void sunLight(const vec3 surfaceNormal, const vec3 eyeDirection, float shiny, float spec, float diffuse, inout vec3 diffuseColor, inout vec3 specularColor) {"\
-"	vec3 reflection = normalize(reflect(sunDirection, surfaceNormal));\n"\
-"	float direction = max(0.0, dot(eyeDirection, reflection));\n"\
-"	specularColor += pow(direction, shiny) * lightDiffuseColor * spec;\n"\
-"	diffuseColor += max(dot(sunDirection, surfaceNormal), 0.0) * lightDiffuseColor * diffuse;\n"\
-"}\n"\
-"void main() {\n"\
-"	vec4 noise = getNoise(V.xz * size);\n"\
-"	vec3 surfaceNormal = normalize(noise.xzy * vec3(1.5, 1.0, 1.5));\n"\
-"	vec3 diffuseLight = lightDiffuseColor;\n"\
-"	vec3 specularLight = vec3(0.0);\n"\
-"	vec3 worldToEye = eyePos - V.xyz;\n"\
-"	vec3 eyeDirection = normalize(worldToEye);\n"\
-"	sunLight(surfaceNormal, eyeDirection, 10.0, 0.4, 0.6, diffuseLight, specularLight);\n"\
-"	vec3 scatter = max(0.0, dot(surfaceNormal, eyeDirection)) * waterColor;\n"\
-"	//float s = getShadowMask();\n"\
-"	float s = 1.0f;\n"\
-"	vec3 albedo = ((scatter + lightAmbientColor * waterColor) * s);\n"\
-"	vec3 outgoingLight = albedo;\n"\
-"	out_color[0] = vec4(outgoingLight, alpha);\n"\
-"	out_color[1] = vec4(specularLight, 1);\n"\
-"}";
-
 std::map<std::string, std::map<int,CShader*>> CShader::m_instances;
 CShader* CShader::GetInstance(std::string type)
 {
@@ -1016,13 +909,6 @@ CShader::CShader(std::string type) {
 				{lighting_vert,lighting_frag},
 				{lighting_vert,lighting_frag},
 				{lighting_vert,lighting_frag},
-			}
-		},{
-			"Water",
-			{
-				{mesh_vert,water_flag},
-				{mesh_vert,water_flag_f},
-				{mesh_vert,water_flag_f},
 			}
 		},
 	};
@@ -1151,10 +1037,6 @@ bool CShader::Load(const char* vertexPath,const char* fragPath){
 
 	return true;
 	
-}
-void CShader::Add(std::string type, int render_type, CShader* shader)
-{
-	m_instances[type][render_type] = shader;
 }
 bool CShader::Load(const char* path, GLuint type){
 	if (!program) program = glCreateProgram();

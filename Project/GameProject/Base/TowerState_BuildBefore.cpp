@@ -4,6 +4,8 @@ TowerBase::BuildBefore::BuildBefore(TowerBase* owner) : State(owner) {
 }
 
 void TowerBase::BuildBefore::Enter() {
+	//“–‚½‚è”»’è‚ðs‚í‚È‚¢‚æ‚¤Ý’è
+	mp_owner->SetIsCollision(false);
 }
 
 void TowerBase::BuildBefore::Update() {

@@ -18,12 +18,12 @@ void ElementTowerAttack::Update(){
 	//敵との衝突判定
 	CollisionAttack();
 	//攻撃判定が終われば削除
-	Kill();
+	SetKill();
 }
 
 void ElementTowerAttack::CollisionAttack(){
 	//敵との当たり判定
-	for (auto& t : m_collisionList) {
+	for (auto& t : GetCollisionList()) {
 		//CharaBase型にキャストできたら
 		if (CharaBase* c = dynamic_cast<CharaBase*>(t)) {
 			//ターゲットへのベクトル(y座標の影響を無視)

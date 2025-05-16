@@ -14,18 +14,6 @@ class Player;
 #include "imgui/imgui_ja_gryph_ranges.h"
 
 class BuildMenu_UI : public ObjectBase {
-private:
-	UIBase* mp_UIFrame; //UIフレームのポインタ
-	Player* mp_player;  //プレイヤーのポインタ
-
-	CImage Arrow;
-	CImage Cannon;
-	CImage Fire;
-	CImage Ice;
-	CImage Thunder;
-
-	int m_kinds;
-
 public:
 	/// <summary>
 	/// コンストラクタ
@@ -35,6 +23,7 @@ public:
 	/// デストラクタ
 	/// </summary>
 	~BuildMenu_UI();
+
 	/// <summary>
 	/// 更新処理
 	/// </summary>
@@ -43,8 +32,23 @@ public:
 	/// 描画処理
 	/// </summary>
 	void Draw() override;
+
 	/// <summary>
 	/// 建てようとしているタワーの種類から建てられるかを確認
 	/// </summary>
 	void KindsCheck(int kinds);
+
+private:
+	UIBase* mp_UIFrame; //UIフレームのポインタ
+	Player* mp_player;  //プレイヤーのポインタ
+
+	CImage m_icon;
+
+	CImage Arrow;
+	CImage Cannon;
+	CImage Fire;
+	CImage Ice;
+	CImage Thunder;
+
+	int m_kinds;
 };

@@ -17,17 +17,6 @@ public:
 		float CT;         //クールタイム
 	};
 
-private:
-	Status baseStatus;    //バフ/デバフを受ける前の基礎ステータス
-	Status currentStatus; //現在のステータス
-	float m_elapsedTime;  //経過時間計測用
-
-	/// <summary>
-	/// 経過時間計測用変数の初期化
-	/// </summary>
-	void InitializeElapsedTime();
-
-public:
 	/// <summary>
 	/// コンストラクタ
 	/// </summary>
@@ -36,6 +25,7 @@ public:
 	/// デストラクタ
 	/// </summary>
 	~CharaStatus();
+
 	/// <summary>
 	/// 初期ステータスを設定
 	/// </summary>
@@ -76,8 +66,9 @@ public:
 	/// 基礎ステータスを更新
 	/// </summary>
 	void UpdateBaseStatus();
+
 	/// <summary>
-	/// 基礎ステータスを返却
+	/// 基礎ステータスを取得
 	/// </summary>
 	/// <returns>基礎ステータス</returns>
 	const Status& GetBaseStatus() const;
@@ -87,67 +78,66 @@ public:
 	/// <param name="setStatus">設定するステータス</param>
 	void SetBaseStatus(const Status& setStatus);
 	/// <summary>
-	/// 現在のステータスを返却
+	/// 現在のステータスを取得
 	/// </summary>
 	/// <returns>現在のステータス</returns>
 	const Status& GetCurrentStatus() const;
 	/// <summary>
-	/// 現在のステータスを設定(不必要なら消す)
+	/// 現在のステータスを設定
 	/// </summary>
 	/// <param name="setStatus">設定するステータス</param>
 	void SetCurrentStatus(const Status& setStatus);
 
-	//個別にステータスが必用なら、その分のゲッターを用意する
-
 	/// <summary>
-	/// 最大レベルを返却
+	/// 最大レベルを取得
 	/// </summary>
-	/// <returns></returns>
-	const int GetMaxLevel() const;
+	/// <returns>最大レベル</returns>
+	int GetMaxLevel() const;
 	/// <summary>
-	/// 現在のレベルを返却
+	/// 現在のレベルを取得
 	/// </summary>
-	/// <returns></returns>
-	const int GetLevel() const;
+	/// <returns>現在のレベル</returns>
+	int GetLevel() const;
 	/// <summary>
-	/// 最大HPを返却
+	/// 最大HPを取得
 	/// </summary>
-	/// <returns></returns>
-	const float GetMaxHP() const;
+	/// <returns>最大HP</returns>
+	float GetMaxHP() const;
 	/// <summary>
-	/// 現在のHPを返却
+	/// 現在のHPを取得
 	/// </summary>
-	/// <returns></returns>
-	const float GetHP() const;
+	/// <returns>現在のHP</returns>
+	float GetHP() const;
 	/// <summary>
 	/// HPを設定
 	/// </summary>
+	/// <param name="HP">設定するHP</param>
 	void SetHP(float HP);
 	/// <summary>
-	/// 現在の速度を返却
+	/// 現在の速度を取得
 	/// </summary>
-	/// <returns></returns>
-	const float GetSpeed() const;
+	/// <returns>現在の速度</returns>
+	float GetSpeed() const;
 	/// <summary>
-	/// 現在の攻撃力を返却
+	/// 現在の攻撃力を取得
 	/// </summary>
-	/// <returns></returns>
-	const float GetPower() const;
+	/// <returns>現在の攻撃力</returns>
+	float GetPower() const;
 	/// <summary>
-	/// 現在の防御力を返却
+	/// 現在の防御力を取得
 	/// </summary>
-	/// <returns></returns>
-	const float GetDefence() const;
+	/// <returns>現在の防御力</returns>
+	float GetDefence() const;
 	/// <summary>
-	/// 現在の射程を返却
+	/// 現在の射程を取得
 	/// </summary>
-	/// <returns></returns>
-	const float GetRange() const;
+	/// <returns>現在の射程</returns>
+	float GetRange() const;
 	/// <summary>
-	/// 現在のCTを返却
+	/// 現在のCTを取得
 	/// </summary>
-	/// <returns></returns>
-	const float GetCT() const;
+	/// <returns>現在のCT</returns>
+	float GetCT() const;
 
 	//デバッグ用
 	//死亡
@@ -158,4 +148,14 @@ public:
 	void SetHPMax() {
 		currentStatus.HP = currentStatus.MaxHP;
 	}
+
+private:
+	Status baseStatus;    //バフ/デバフを受ける前の基礎ステータス
+	Status currentStatus; //現在のステータス
+	float m_elapsedTime;  //経過時間計測用
+
+	/// <summary>
+	/// 経過時間計測用変数の初期化
+	/// </summary>
+	void InitializeElapsedTime();
 };

@@ -46,15 +46,16 @@ void Utility::DrawLine(const CVector3D &s, const CVector3D &e, const  CVector4D 
 	glUniform4fv(glGetUniformLocation(shader->GetProgram(), "Color"), 1, color.v);
 
 	glEnableVertexAttribArray(CShader::eVertexLocation);
-
+	
 	glVertexAttribPointer(CShader::eVertexLocation, 3, GL_FLOAT, GL_FALSE, 0, &vertex);
+
 
 	glLineWidth(lineWidth);
 	glDrawArrays(GL_LINES, 0, 2);
 	glLineWidth(1.0f);
 
 	glDisableVertexAttribArray(CShader::eVertexLocation);
-
+	
 
 	shader->Disable();
 
@@ -435,7 +436,7 @@ void Utility::DrawCapsule(const CVector2D& s, const CVector2D& e, const float si
 
 
 
-	pvm = mProj * CMatrix::MTranselate(s) * CMatrix::MRotationZ(M_PI - a) * CMatrix::MScale(size, size, 1);
+	pvm = mProj * CMatrix::MTranselate(s) * CMatrix::MRotationZ(M_PI - a) * CMatrix::MScale(size, size, 1.0f);
 	glUniformMatrix4fv(glGetUniformLocation(shader->GetProgram(), "PVWMatrix"), 1, GL_FALSE, pvm.f);
 	glVertexAttribPointer(CShader::eVertexLocation, 3, GL_FLOAT, GL_FALSE, 0, vertex);
 	glDrawArrays(GL_TRIANGLE_FAN, 0, cut + 2);
@@ -698,6 +699,61 @@ void Utility::DrawSector(const CMatrix& mat, const float start, const float end,
 	delete[] s;
 	delete[] c;
 }
+void Utility::DrawSmoothCircle(const CVector3D& pos, const float size, const CVector4D& color){
+	glPushAttrib(GL_ALL_ATTRIB_BITS);
+	//各種機能を無効に
+	//カリング無効
+	glDisable(GL_CULL_FACE);
+	//ライティング無効
+	glDisable(GL_LIGHTING);
+	//デプステスト無効
+	glDisable(GL_DEPTH_TEST);
+	//
+	//正射投影の行列を作成
+	//
+
+	const int cut = 32;
+	CVector3D* vertex = new CVector3D[cut + 2];
+	int idx = 0;
+	vertex[0] = CVector3D(0.0f, 0.0f, 0.0f);
+	idx++;
+	for (int i = 0; i <= cut; ++i, ++idx) {
+		float s = sinf((float)M_PI * 2 * i / cut);
+		float c = cosf((float)M_PI * 2 * i / cut);
+		vertex[idx] = CVector3D(s, 0.0f, c);
+	}
+
+	CMatrix pvm = CCamera::GetCurrent()->GetProjectionMatrix() * CCamera::GetCurrent()->GetViewMatrix() * CMatrix::MTranselate(pos) * CMatrix::MScale(size, size, size);
+
+	CShader* shader = CShader::GetInstance("Solid");
+	shader->Enable();
+
+	glUniformMatrix4fv(glGetUniformLocation(shader->GetProgram(), "PVWMatrix"), 1, GL_FALSE, pvm.f);
+	glUniform4fv(glGetUniformLocation(shader->GetProgram(), "Color"), 1, color.v);
+
+	glEnableVertexAttribArray(CShader::eVertexLocation);
+
+	glVertexAttribPointer(CShader::eVertexLocation, 3, GL_FLOAT, GL_FALSE, 0, vertex);
+
+	glDrawArrays(GL_TRIANGLE_FAN, 0, cut + 2);
+
+	glDisableVertexAttribArray(CShader::eVertexLocation);
+
+	shader->Disable();
+
+	glEnable(GL_CULL_FACE);
+
+	glEnable(GL_LIGHTING);
+
+	glEnable(GL_DEPTH_TEST);
+
+	glPopAttrib();
+
+	delete[] vertex;
+}
+
+
+
 //
 //void Utility::DrawCapsule(CVector2D & s, CVector2D &e, float size, CVector4D & color)
 //{
